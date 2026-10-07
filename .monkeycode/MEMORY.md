@@ -24,5 +24,7 @@ User instruction entries should follow this format:
 - Context: MailPort feature implementation (HTTP API sender + Outlook/Gmail OAuth)
 - Instructions:
   - Do not deliberate at length before acting; start editing files directly ("开始改文件，别在那思考了").
-  - Do not over-test; trust the initial implementation quality and stop smoke-testing early ("不用测试太多了，相信你的初版质量").
+  - Do not smoke-test routine changes. Only test when a change is genuinely large
+    (a refactor, adding a lot of features at once) or when the user reports a
+    deployment problem that needs reproducing ("除非真的非常大的改动...不然不需要测试").
   - When the user is unfamiliar with a feature (e.g. HTTP APIs), write detailed beginner-friendly docs under doc/ for it.
