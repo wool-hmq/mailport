@@ -117,7 +117,7 @@ export default function HomePage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs dark:bg-gray-800">
-                        {s.type}
+                        {t(`type.${s.type}` as never)}
                       </span>
                     </td>
                     <td className="px-4 py-3">

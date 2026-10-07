@@ -7,7 +7,7 @@
  * 并在 detectDriver() 中注册识别规则。
  */
 
-export type SenderType = "smtp" | "outlook_oauth2";
+export type SenderType = "smtp" | "http" | "outlook_oauth2" | "gmail_oauth2";
 
 export interface Sender {
   id: string;
@@ -34,6 +34,27 @@ export interface Sender {
   fromName: string | null;
   /** 允许的收件域名(逗号分隔,空表示不限制) */
   allowedDomains: string[];
+
+  // ---- HTTP API 发件 ----
+  /** 请求地址,如 https://api.example.com/send */
+  httpUrl: string | null;
+  /** 请求方法,默认 POST */
+  httpMethod: string | null;
+  /** 自定义请求头,标准 JSON 对象文本,如 {"Authorization":"Bearer xxx"} */
+  httpHeaders: string | null;
+  /** 自定义请求体模板,支持 {{to}} {{subject}} {{text}} {{html}} 占位符 */
+  httpBody: string | null;
+
+  // ---- OAuth2 发件(Outlook / Gmail) ----
+  /** OAuth 应用 Client ID */
+  oauthClientId: string | null;
+  /** OAuth 应用 Client Secret(密文) */
+  oauthClientSecret: string | null;
+  /** 刷新令牌(密文) */
+  oauthRefreshToken: string | null;
+  /** 已完成授权的时间戳;未授权为 null */
+  oauthAuthorizedAt: number | null;
+
   createdAt: number;
   updatedAt: number;
 }

@@ -16,10 +16,17 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<"keys" | "settings" | "logs">("keys");
+  const [oauthJustSucceeded, setOauthJustSucceeded] = useState(false);
 
   useEffect(() => {
     void params.then((p) => setId(p.id));
   }, [params]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("oauth") === "success") {
+      setOauthJustSucceeded(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -79,6 +86,12 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
         {error ? (
           <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
             {error}
+          </p>
+        ) : null}
+
+        {oauthJustSucceeded ? (
+          <p className="mb-4 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+            {t("detail.oauthSuccess")}
           </p>
         ) : null}
 
@@ -293,21 +306,89 @@ function SettingsTab({ sender }: { sender: Sender }) {
     }
   }
 
+  const isOAuth = sender.type === "outlook_oauth2" || sender.type === "gmail_oauth2";
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.smtpTitle")}</h2>
-        <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-800 dark:bg-gray-900 sm:grid-cols-2">
-          <Detail label={t("settings.type")} value={sender.type} />
-          <Detail label={t("settings.service")} value={sender.service} />
-          <Detail label={t("settings.host")} value={sender.host} />
-          <Detail label={t("settings.port")} value={sender.port?.toString()} />
-          <Detail label={t("settings.secure")} value={sender.secure ? t("common.yes") : t("common.no")} />
-          <Detail label={t("settings.username")} value={sender.username} />
-          <Detail label={t("settings.fromAddress")} value={sender.fromAddress} />
-          <Detail label={t("settings.fromName")} value={sender.fromName} />
-        </dl>
-      </div>
+      {sender.type === "smtp" ? (
+        <div>
+          <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.smtpTitle")}</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-800 dark:bg-gray-900 sm:grid-cols-2">
+            <Detail label={t("settings.type")} value={t(`type.${sender.type}` as never)} />
+            <Detail label={t("settings.service")} value={sender.service} />
+            <Detail label={t("settings.host")} value={sender.host} />
+            <Detail label={t("settings.port")} value={sender.port?.toString()} />
+            <Detail label={t("settings.secure")} value={sender.secure ? t("common.yes") : t("common.no")} />
+            <Detail label={t("settings.username")} value={sender.username} />
+            <Detail label={t("settings.fromAddress")} value={sender.fromAddress} />
+            <Detail label={t("settings.fromName")} value={sender.fromName} />
+          </dl>
+        </div>
+      ) : null}
+
+      {sender.type === "http" ? (
+        <div>
+          <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.httpTitle")}</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-800 dark:bg-gray-900">
+            <Detail label={t("settings.type")} value={t(`type.${sender.type}` as never)} />
+            <Detail label={t("settings.httpUrl")} value={sender.httpUrl} />
+            <Detail label={t("settings.httpMethod")} value={sender.httpMethod ?? "POST"} />
+            <Detail label={t("settings.fromAddress")} value={sender.fromAddress} />
+            <Detail label={t("settings.fromName")} value={sender.fromName} />
+            <div className="col-span-full border-t border-gray-100 pt-2 dark:border-gray-800/60">
+              <dt className="text-gray-500 dark:text-gray-400">{t("settings.httpHeaders")}</dt>
+              <dd className="mt-1">
+                <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all rounded bg-gray-100 p-2 font-mono text-xs dark:bg-gray-800">
+                  {sender.httpHeaders?.trim() ? sender.httpHeaders : "—"}
+                </pre>
+              </dd>
+            </div>
+            <div className="col-span-full">
+              <dt className="text-gray-500 dark:text-gray-400">{t("settings.httpBody")}</dt>
+              <dd className="mt-1">
+                <pre className="max-h-60 overflow-auto whitespace-pre-wrap break-all rounded bg-gray-100 p-2 font-mono text-xs dark:bg-gray-800">
+                  {sender.httpBody?.trim() ? sender.httpBody : t("form.httpBodyPlaceholder")}
+                </pre>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
+
+      {isOAuth ? (
+        <div>
+          <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.oauthTitle")}</h2>
+          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-800 dark:bg-gray-900 sm:grid-cols-2">
+            <Detail label={t("settings.type")} value={t(`type.${sender.type}` as never)} />
+            <Detail label={t("settings.username")} value={sender.username} />
+            <Detail label={t("settings.oauthClientId")} value={sender.oauthClientId} />
+            <div className="flex justify-between gap-4 border-b border-gray-100 pb-2 dark:border-gray-800/60">
+              <dt className="text-gray-500 dark:text-gray-400">{t("settings.oauthStatus")}</dt>
+              <dd>
+                {sender.oauthRefreshToken && sender.oauthAuthorizedAt ? (
+                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
+                    {t("settings.oauthAuthorized")}{" "}
+                    {new Date(sender.oauthAuthorizedAt).toLocaleDateString()}
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
+                    {t("settings.oauthNotAuthorized")}
+                  </span>
+                )}
+              </dd>
+            </div>
+            <div className="col-span-full">
+              <dt className="text-gray-500 dark:text-gray-400">{t("settings.oauthCallback")}</dt>
+              <dd className="mt-1">
+                <code className="block break-all rounded bg-gray-100 p-2 font-mono text-xs dark:bg-gray-800">
+                  {origin}/api/{sender.pid}/oauth/callback
+                </code>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
 
       <div>
         <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.domainsTitle")}</h2>

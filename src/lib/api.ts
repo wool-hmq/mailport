@@ -2,11 +2,13 @@
  * 浏览器端 API 调用封装:统一处理 JSON 与 401 跳转登录。
  */
 
+export type SenderType = "smtp" | "http" | "outlook_oauth2" | "gmail_oauth2";
+
 export interface Sender {
   id: string;
   pid: string;
   name: string;
-  type: "smtp" | "outlook_oauth2";
+  type: SenderType;
   enabled: boolean;
   host: string | null;
   port: number | null;
@@ -16,6 +18,14 @@ export interface Sender {
   fromAddress: string | null;
   fromName: string | null;
   allowedDomains: string[];
+  httpUrl: string | null;
+  httpMethod: string | null;
+  httpHeaders: string | null;
+  httpBody: string | null;
+  oauthClientId: string | null;
+  oauthClientSecret: string | null;
+  oauthRefreshToken: string | null;
+  oauthAuthorizedAt: number | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -99,4 +109,6 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ to }),
     }),
+  oauthStart: (id: string) =>
+    request<{ authUrl: string }>(`/api/admin/senders/${id}/oauth/start`, { method: "POST" }),
 };

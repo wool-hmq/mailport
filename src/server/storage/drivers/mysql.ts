@@ -75,6 +75,14 @@ function rowToSender(r: AnyRow): Sender {
     fromAddress: r.from_address === null ? null : String(r.from_address),
     fromName: r.from_name === null ? null : String(r.from_name),
     allowedDomains: domains,
+    httpUrl: r.http_url === null ? null : String(r.http_url),
+    httpMethod: r.http_method === null ? null : String(r.http_method),
+    httpHeaders: r.http_headers === null ? null : String(r.http_headers),
+    httpBody: r.http_body === null ? null : String(r.http_body),
+    oauthClientId: r.oauth_client_id === null ? null : String(r.oauth_client_id),
+    oauthClientSecret: r.oauth_client_secret ? decrypt(String(r.oauth_client_secret)) : null,
+    oauthRefreshToken: r.oauth_refresh_token ? decrypt(String(r.oauth_refresh_token)) : null,
+    oauthAuthorizedAt: r.oauth_authorized_at === null ? null : Number(r.oauth_authorized_at),
     createdAt: Number(r.created_at),
     updatedAt: Number(r.updated_at),
   };
@@ -142,7 +150,32 @@ export async function createStorage(): Promise<IStorage> {
           UNIQUE KEY uk_pid (pid)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
       `);
-      await q(`CREATE INDEX idx_senders_pid ON senders(pid)`);
+      // MySQL 不支持 CREATE INDEX IF NOT EXISTS,重复执行会报错,忽略重复键名
+      try {
+        await q(`CREATE INDEX idx_senders_pid ON senders(pid)`);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        if (!msg.includes("Duplicate")) throw e;
+      }
+
+      // 老库升级:补齐新增列
+      const cols = await q(
+        `SELECT COLUMN_NAME FROM information_schema.columns WHERE table_name = 'senders'`,
+      );
+      const have = new Set(cols.map((c) => c.COLUMN_NAME));
+      const extraColumns: Record<string, string> = {
+        http_url: "TEXT NULL",
+        http_method: "VARCHAR(16) NULL",
+        http_headers: "TEXT NULL",
+        http_body: "TEXT NULL",
+        oauth_client_id: "TEXT NULL",
+        oauth_client_secret: "TEXT NULL",
+        oauth_refresh_token: "TEXT NULL",
+        oauth_authorized_at: "BIGINT NULL",
+      };
+      for (const [col, ddl] of Object.entries(extraColumns)) {
+        if (!have.has(col)) await q(`ALTER TABLE senders ADD COLUMN ${col} ${ddl}`);
+      }
       await q(`
         CREATE TABLE IF NOT EXISTS sender_keys (
           id            VARCHAR(64) NOT NULL PRIMARY KEY,
@@ -178,8 +211,11 @@ export async function createStorage(): Promise<IStorage> {
       const ts = now();
       const id = cryptoRandomId();
       await q(
-        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains, created_at, updated_at)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains,
+          http_url, http_method, http_headers, http_body,
+          oauth_client_id, oauth_client_secret, oauth_refresh_token, oauth_authorized_at,
+          created_at, updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
         [
           id,
           data.pid,
@@ -195,6 +231,14 @@ export async function createStorage(): Promise<IStorage> {
           data.fromAddress,
           data.fromName,
           JSON.stringify(data.allowedDomains ?? []),
+          data.httpUrl,
+          data.httpMethod,
+          data.httpHeaders,
+          data.httpBody,
+          data.oauthClientId,
+          data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null,
+          data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null,
+          data.oauthAuthorizedAt,
           ts,
           ts,
         ],
@@ -222,6 +266,14 @@ export async function createStorage(): Promise<IStorage> {
       if (data.fromAddress !== undefined) push("from_address", data.fromAddress);
       if (data.fromName !== undefined) push("from_name", data.fromName);
       if (data.allowedDomains !== undefined) push("allowed_domains", JSON.stringify(data.allowedDomains ?? []));
+      if (data.httpUrl !== undefined) push("http_url", data.httpUrl);
+      if (data.httpMethod !== undefined) push("http_method", data.httpMethod);
+      if (data.httpHeaders !== undefined) push("http_headers", data.httpHeaders);
+      if (data.httpBody !== undefined) push("http_body", data.httpBody);
+      if (data.oauthClientId !== undefined) push("oauth_client_id", data.oauthClientId);
+      if (data.oauthClientSecret !== undefined) push("oauth_client_secret", data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null);
+      if (data.oauthRefreshToken !== undefined) push("oauth_refresh_token", data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null);
+      if (data.oauthAuthorizedAt !== undefined) push("oauth_authorized_at", data.oauthAuthorizedAt);
       if (sets.length === 0) {
         const res = await q(`SELECT * FROM senders WHERE id = ?`, [id]);
         return res[0] ? rowToSender(res[0]) : null;

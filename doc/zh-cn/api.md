@@ -65,7 +65,7 @@ curl -X POST https://your-app.vercel.app/api/a1b2c3/send \
 | 401 | 未提供密钥或密钥无效/已禁用 |
 | 403 | 收件域名不在该发件商的白名单内 |
 | 404 | `pid` 不存在或发件商已禁用 |
-| 500 | SMTP 发送失败,`details` 为底层错误 |
+| 500 | 发送失败,`details` 为底层错误 |
 | 503 | 服务器未配置数据库或主密钥 |
 
 所有错误响应格式为 `{ "error": "...", "details"?: "..." }`。
@@ -110,12 +110,31 @@ DELETE /api/admin/senders/{id}               → { success: true }
   "fromAddress": "noreply@example.com",
   "fromName": "My Blog",
   "allowedDomains": ["example.com"],
+  "httpUrl": null,
+  "httpMethod": null,
+  "httpHeaders": null,
+  "httpBody": null,
+  "oauthClientId": null,
+  "oauthAuthorizedAt": null,
   "createdAt": 1735000000000,
   "updatedAt": 1735000000000
 }
 ```
 
-> 接口返回的 `password` 字段为解密后的明文,仅用于后台回显,请勿记录到外部日志。
+`type` 取值:
+
+| 值 | 说明 | 必填字段 |
+| --- | --- | --- |
+| `smtp` | 账号密码直连 SMTP | `host` 或 `service`、`username`、`password` |
+| `http` | 转发到自定义 HTTP API | `httpUrl` |
+| `outlook_oauth2` | Outlook OAuth2 授权后 SMTP 发件 | `username`、`oauthClientId`、`oauthClientSecret` |
+| `gmail_oauth2` | Gmail OAuth2 授权后 SMTP 发件 | `username`、`oauthClientId`、`oauthClientSecret` |
+
+`smtp` 类型的 `service` 为 nodemailer 预置服务名(如 `QQ`、`Gmail`、`Outlook`),填写后无需再设 `host` / `port`。
+你可以在[这里](https://github.com/nodemailer/nodemailer/blob/master/src/well-known/services.json)查看所有支持的运营商。
+
+> 接口返回的 `password` / `oauthClientSecret` 字段为解密后的明文,仅用于后台回显,请勿记录到外部日志。
+> `oauthRefreshToken` 由 OAuth 回调写入,不通过本接口修改。
 
 ### 密钥
 

@@ -110,12 +110,31 @@ Creating a sender also generates its first 32-char key. Deleting a sender cascad
   "fromAddress": "noreply@example.com",
   "fromName": "My Blog",
   "allowedDomains": ["example.com"],
+  "httpUrl": null,
+  "httpMethod": null,
+  "httpHeaders": null,
+  "httpBody": null,
+  "oauthClientId": null,
+  "oauthAuthorizedAt": null,
   "createdAt": 1735000000000,
   "updatedAt": 1735000000000
 }
 ```
 
-> The `password` field returned by the API is the decrypted plaintext, used only for dashboard display. Do not log it externally.
+`type` values:
+
+| Value | Description | Required fields |
+| --- | --- | --- |
+| `smtp` | Plain SMTP with account/password | `host` or `service`, `username`, `password` |
+| `http` | Forward to a custom HTTP API | `httpUrl` |
+| `outlook_oauth2` | Outlook via OAuth2, sent over SMTP | `username`, `oauthClientId`, `oauthClientSecret` |
+| `gmail_oauth2` | Gmail via OAuth2, sent over SMTP | `username`, `oauthClientId`, `oauthClientSecret` |
+
+For the `smtp` type, `service` is a built-in nodemailer service name (e.g. `QQ`, `Gmail`, `Outlook`) that lets you skip `host` / `port`.
+See [all supported providers here](https://github.com/nodemailer/nodemailer/blob/master/src/well-known/services.json).
+
+> The `password` / `oauthClientSecret` fields in responses are decrypted plaintext, meant for dashboard display only — never log them externally.
+> `oauthRefreshToken` is written by the OAuth callback and cannot be set through this API.
 
 ### Keys
 

@@ -61,6 +61,14 @@ interface SenderRow {
   from_address: string | null;
   from_name: string | null;
   allowed_domains: string[] | null;
+  http_url: string | null;
+  http_method: string | null;
+  http_headers: string | null;
+  http_body: string | null;
+  oauth_client_id: string | null;
+  oauth_client_secret: string | null;
+  oauth_refresh_token: string | null;
+  oauth_authorized_at: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -103,6 +111,14 @@ function rowToSender(r: SenderRow): Sender {
     fromAddress: r.from_address,
     fromName: r.from_name,
     allowedDomains: Array.isArray(r.allowed_domains) ? r.allowed_domains : [],
+    httpUrl: r.http_url,
+    httpMethod: r.http_method,
+    httpHeaders: r.http_headers,
+    httpBody: r.http_body,
+    oauthClientId: r.oauth_client_id,
+    oauthClientSecret: r.oauth_client_secret ? decrypt(r.oauth_client_secret) : null,
+    oauthRefreshToken: r.oauth_refresh_token ? decrypt(r.oauth_refresh_token) : null,
+    oauthAuthorizedAt: r.oauth_authorized_at,
     createdAt: Number(r.created_at),
     updatedAt: Number(r.updated_at),
   };
@@ -170,6 +186,25 @@ export async function createStorage(): Promise<IStorage> {
         )
       `);
       await q(`CREATE INDEX IF NOT EXISTS idx_senders_pid ON senders(pid)`);
+
+      // 老库升级:补齐新增列
+      const cols = await q<{ column_name: string }>(
+        `SELECT column_name FROM information_schema.columns WHERE table_name = 'senders'`,
+      );
+      const have = new Set(cols.map((c) => c.column_name));
+      const extraColumns: Record<string, string> = {
+        http_url: "TEXT",
+        http_method: "TEXT",
+        http_headers: "TEXT",
+        http_body: "TEXT",
+        oauth_client_id: "TEXT",
+        oauth_client_secret: "TEXT",
+        oauth_refresh_token: "TEXT",
+        oauth_authorized_at: "BIGINT",
+      };
+      for (const [col, ddl] of Object.entries(extraColumns)) {
+        if (!have.has(col)) await q(`ALTER TABLE senders ADD COLUMN IF NOT EXISTS ${col} ${ddl}`);
+      }
       await q(`
         CREATE TABLE IF NOT EXISTS sender_keys (
           id            TEXT PRIMARY KEY,
@@ -202,8 +237,11 @@ export async function createStorage(): Promise<IStorage> {
     async createSender(data) {
       const ts = now();
       const row = await q<SenderRow>(
-        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains, created_at, updated_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING *`,
+        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains,
+          http_url, http_method, http_headers, http_body,
+          oauth_client_id, oauth_client_secret, oauth_refresh_token, oauth_authorized_at,
+          created_at, updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24) RETURNING *`,
         [
           cryptoRandomId(),
           data.pid,
@@ -219,6 +257,14 @@ export async function createStorage(): Promise<IStorage> {
           data.fromAddress,
           data.fromName,
           data.allowedDomains,
+          data.httpUrl,
+          data.httpMethod,
+          data.httpHeaders,
+          data.httpBody,
+          data.oauthClientId,
+          data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null,
+          data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null,
+          data.oauthAuthorizedAt,
           ts,
           ts,
         ],
@@ -246,6 +292,14 @@ export async function createStorage(): Promise<IStorage> {
       if (data.fromAddress !== undefined) push("from_address", data.fromAddress);
       if (data.fromName !== undefined) push("from_name", data.fromName);
       if (data.allowedDomains !== undefined) push("allowed_domains", data.allowedDomains);
+      if (data.httpUrl !== undefined) push("http_url", data.httpUrl);
+      if (data.httpMethod !== undefined) push("http_method", data.httpMethod);
+      if (data.httpHeaders !== undefined) push("http_headers", data.httpHeaders);
+      if (data.httpBody !== undefined) push("http_body", data.httpBody);
+      if (data.oauthClientId !== undefined) push("oauth_client_id", data.oauthClientId);
+      if (data.oauthClientSecret !== undefined) push("oauth_client_secret", data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null);
+      if (data.oauthRefreshToken !== undefined) push("oauth_refresh_token", data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null);
+      if (data.oauthAuthorizedAt !== undefined) push("oauth_authorized_at", data.oauthAuthorizedAt);
       if (sets.length === 0) {
         const cur = await q<SenderRow>(`SELECT * FROM senders WHERE id = $1`, [id]);
         return cur[0] ? rowToSender(cur[0]) : null;

@@ -1,18 +1,18 @@
 # MailPort
 
-Turn SMTP into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
+Turn email sending into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
 
 Docs: [English](./doc/en) / [简体中文](./doc/zh-cn)
 
 ## What it does
 
-- **Dashboard** — password-protected admin UI to create and manage SMTP senders.
+- **Dashboard** — password-protected admin UI to create and manage SMTP / HTTP API / Gmail and Outlook OAuth senders.
 - **One endpoint per sender** — `POST /api/{pid}/send`, where `pid` is a random 5–10 char id generated on creation.
 - **Multiple keys per sender** — generate 32-char API keys in the settings page; view, enable, disable, or revoke them any time.
 - **Per-sender recipient domain allowlists** — configured per sender in the dashboard, stored in the database.
 - **Multi-database** — PostgreSQL, MongoDB, MySQL/TiDB, or SQLite. Picked automatically from your environment variables.
 - **Send logs** — every request is recorded with status, error, and duration.
-- **Encrypted credentials** — SMTP passwords and API keys are encrypted at rest (AES-256-GCM).
+- **Encrypted credentials** — SMTP passwords, OAuth secrets, and API keys are encrypted at rest (AES-256-GCM).
 
 ## Quick start
 
@@ -48,17 +48,18 @@ curl -X POST https://your-app.vercel.app/api/a1b2c3/send \
 | Environment variables | [en/env.md](./doc/en/env.md) | [zh-cn/env.md](./doc/zh-cn/env.md) |
 | Database schema | [en/database.md](./doc/en/database.md) | [zh-cn/database.md](./doc/zh-cn/database.md) |
 | API reference | [en/api.md](./doc/en/api.md) | [zh-cn/api.md](./doc/zh-cn/api.md) |
+| HTTP API senders | [en/http-sender.md](./doc/en/http-sender.md) | [zh-cn/http-sender.md](./doc/zh-cn/http-sender.md) |
+| Outlook / Gmail OAuth | [en/oauth.md](./doc/en/oauth.md) | [zh-cn/oauth.md](./doc/zh-cn/oauth.md) |
 | Deployment | [en/deploy.md](./doc/en/deploy.md) | [zh-cn/deploy.md](./doc/zh-cn/deploy.md) |
 
 ## Tech stack
 
 - Next.js (App Router) + TypeScript + Tailwind CSS
-- nodemailer for SMTP
+- nodemailer for SMTP (including XOAUTH2 for Outlook / Gmail)
 - Storage adapter layer modeled after Waline's multi-database approach
 
 ## Roadmap
 
-- Outlook OAuth2 provider (schema and UI are already reserved as `outlook_oauth2`)
 - Additional database adapters
 
 ## License

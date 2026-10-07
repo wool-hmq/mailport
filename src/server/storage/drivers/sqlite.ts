@@ -49,6 +49,14 @@ interface SenderRow {
   from_address: string | null;
   from_name: string | null;
   allowed_domains: string | null;
+  http_url: string | null;
+  http_method: string | null;
+  http_headers: string | null;
+  http_body: string | null;
+  oauth_client_id: string | null;
+  oauth_client_secret: string | null;
+  oauth_refresh_token: string | null;
+  oauth_authorized_at: number | null;
   created_at: number;
   updated_at: number;
 }
@@ -100,6 +108,14 @@ function rowToSender(r: SenderRow): Sender {
     fromAddress: r.from_address,
     fromName: r.from_name,
     allowedDomains: domains,
+    httpUrl: r.http_url,
+    httpMethod: r.http_method,
+    httpHeaders: r.http_headers,
+    httpBody: r.http_body,
+    oauthClientId: r.oauth_client_id,
+    oauthClientSecret: r.oauth_client_secret ? decrypt(r.oauth_client_secret) : null,
+    oauthRefreshToken: r.oauth_refresh_token ? decrypt(r.oauth_refresh_token) : null,
+    oauthAuthorizedAt: r.oauth_authorized_at,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   };
@@ -162,6 +178,23 @@ export async function createStorage(): Promise<IStorage> {
         )
       `);
       d.exec(`CREATE INDEX IF NOT EXISTS idx_senders_pid ON senders(pid)`);
+
+      // 老库升级:补齐新增列(SQLite 不支持 ADD COLUMN IF NOT EXISTS,先查表结构)
+      const existing = d.prepare(`PRAGMA table_info(senders)`).all() as { name: string }[];
+      const have = new Set(existing.map((c) => c.name));
+      const extraColumns: Record<string, string> = {
+        http_url: "TEXT",
+        http_method: "TEXT",
+        http_headers: "TEXT",
+        http_body: "TEXT",
+        oauth_client_id: "TEXT",
+        oauth_client_secret: "TEXT",
+        oauth_refresh_token: "TEXT",
+        oauth_authorized_at: "INTEGER",
+      };
+      for (const [col, ddl] of Object.entries(extraColumns)) {
+        if (!have.has(col)) d.exec(`ALTER TABLE senders ADD COLUMN ${col} ${ddl}`);
+      }
       d.exec(`
         CREATE TABLE IF NOT EXISTS sender_keys (
           id            TEXT PRIMARY KEY,
@@ -196,8 +229,14 @@ export async function createStorage(): Promise<IStorage> {
       const ts = now();
       const id = cryptoRandomId();
       d.prepare(
-        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains, created_at, updated_at)
-         VALUES (@id,@pid,@name,@type,@enabled,@host,@port,@secure,@service,@username,@password,@from_address,@from_name,@allowed_domains,@created_at,@updated_at)`,
+        `INSERT INTO senders (id, pid, name, type, enabled, host, port, secure, service, username, password, from_address, from_name, allowed_domains,
+         http_url, http_method, http_headers, http_body,
+         oauth_client_id, oauth_client_secret, oauth_refresh_token, oauth_authorized_at,
+         created_at, updated_at)
+         VALUES (@id,@pid,@name,@type,@enabled,@host,@port,@secure,@service,@username,@password,@from_address,@from_name,@allowed_domains,
+         @http_url,@http_method,@http_headers,@http_body,
+         @oauth_client_id,@oauth_client_secret,@oauth_refresh_token,@oauth_authorized_at,
+         @created_at,@updated_at)`,
       ).run({
         id,
         pid: data.pid,
@@ -213,6 +252,14 @@ export async function createStorage(): Promise<IStorage> {
         from_address: data.fromAddress,
         from_name: data.fromName,
         allowed_domains: JSON.stringify(data.allowedDomains ?? []),
+        http_url: data.httpUrl,
+        http_method: data.httpMethod,
+        http_headers: data.httpHeaders,
+        http_body: data.httpBody,
+        oauth_client_id: data.oauthClientId,
+        oauth_client_secret: data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null,
+        oauth_refresh_token: data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null,
+        oauth_authorized_at: data.oauthAuthorizedAt,
         created_at: ts,
         updated_at: ts,
       });
@@ -240,6 +287,14 @@ export async function createStorage(): Promise<IStorage> {
       if (data.fromAddress !== undefined) push("from_address", data.fromAddress);
       if (data.fromName !== undefined) push("from_name", data.fromName);
       if (data.allowedDomains !== undefined) push("allowed_domains", JSON.stringify(data.allowedDomains ?? []));
+      if (data.httpUrl !== undefined) push("http_url", data.httpUrl);
+      if (data.httpMethod !== undefined) push("http_method", data.httpMethod);
+      if (data.httpHeaders !== undefined) push("http_headers", data.httpHeaders);
+      if (data.httpBody !== undefined) push("http_body", data.httpBody);
+      if (data.oauthClientId !== undefined) push("oauth_client_id", data.oauthClientId);
+      if (data.oauthClientSecret !== undefined) push("oauth_client_secret", data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null);
+      if (data.oauthRefreshToken !== undefined) push("oauth_refresh_token", data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null);
+      if (data.oauthAuthorizedAt !== undefined) push("oauth_authorized_at", data.oauthAuthorizedAt);
       if (sets.length === 0) {
         const row = d.prepare(`SELECT * FROM senders WHERE id = ?`).get(id) as SenderRow | undefined;
         return row ? rowToSender(row) : null;

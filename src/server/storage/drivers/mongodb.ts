@@ -82,6 +82,14 @@ interface SenderDoc extends Document {
   from_address: string | null;
   from_name: string | null;
   allowed_domains: string[];
+  http_url: string | null;
+  http_method: string | null;
+  http_headers: string | null;
+  http_body: string | null;
+  oauth_client_id: string | null;
+  oauth_client_secret: string | null;
+  oauth_refresh_token: string | null;
+  oauth_authorized_at: number | null;
   created_at: number;
   updated_at: number;
 }
@@ -124,6 +132,14 @@ function docToSender(d: SenderDoc): Sender {
     fromAddress: d.from_address,
     fromName: d.from_name,
     allowedDomains: Array.isArray(d.allowed_domains) ? d.allowed_domains : [],
+    httpUrl: d.http_url,
+    httpMethod: d.http_method,
+    httpHeaders: d.http_headers,
+    httpBody: d.http_body,
+    oauthClientId: d.oauth_client_id,
+    oauthClientSecret: d.oauth_client_secret ? decrypt(d.oauth_client_secret) : null,
+    oauthRefreshToken: d.oauth_refresh_token ? decrypt(d.oauth_refresh_token) : null,
+    oauthAuthorizedAt: d.oauth_authorized_at,
     createdAt: d.created_at,
     updatedAt: d.updated_at,
   };
@@ -192,6 +208,14 @@ export async function createStorage(): Promise<IStorage> {
         from_address: data.fromAddress,
         from_name: data.fromName,
         allowed_domains: data.allowedDomains ?? [],
+        http_url: data.httpUrl,
+        http_method: data.httpMethod,
+        http_headers: data.httpHeaders,
+        http_body: data.httpBody,
+        oauth_client_id: data.oauthClientId,
+        oauth_client_secret: data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null,
+        oauth_refresh_token: data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null,
+        oauth_authorized_at: data.oauthAuthorizedAt,
         created_at: ts,
         updated_at: ts,
       };
@@ -213,6 +237,14 @@ export async function createStorage(): Promise<IStorage> {
       if (data.fromAddress !== undefined) sets.from_address = data.fromAddress;
       if (data.fromName !== undefined) sets.from_name = data.fromName;
       if (data.allowedDomains !== undefined) sets.allowed_domains = data.allowedDomains ?? [];
+      if (data.httpUrl !== undefined) sets.http_url = data.httpUrl;
+      if (data.httpMethod !== undefined) sets.http_method = data.httpMethod;
+      if (data.httpHeaders !== undefined) sets.http_headers = data.httpHeaders;
+      if (data.httpBody !== undefined) sets.http_body = data.httpBody;
+      if (data.oauthClientId !== undefined) sets.oauth_client_id = data.oauthClientId;
+      if (data.oauthClientSecret !== undefined) sets.oauth_client_secret = data.oauthClientSecret ? encrypt(data.oauthClientSecret) : null;
+      if (data.oauthRefreshToken !== undefined) sets.oauth_refresh_token = data.oauthRefreshToken ? encrypt(data.oauthRefreshToken) : null;
+      if (data.oauthAuthorizedAt !== undefined) sets.oauth_authorized_at = data.oauthAuthorizedAt;
       if (Object.keys(sets).length === 0) {
         const cur = await col<SenderDoc>("senders").findOne({ _id: id });
         return cur ? docToSender(cur) : null;
