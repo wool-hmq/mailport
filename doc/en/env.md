@@ -77,7 +77,20 @@ Local development and VPS only. **Not usable on Vercel Serverless** (read-only f
 | --- | --- | --- |
 | `SITE_LOCALE` | `en` | Default UI locale. Values: `en`, `zh-cn` |
 | `SESSION_TTL` | `604800` (7 days) | Admin session lifetime, in seconds |
-| `TZ` | `UTC` | Timezone, affects log timestamp rendering |
+| `TZ` | `UTC` | Reserved. Does not affect the UI in this version (see note below) |
+
+## Timezone (TZ)
+
+In the current version, send logs and key usage times are formatted in the browser and follow each visitor's system timezone — the server-side `TZ` variable does not affect the UI. It is reserved for future server-side time formatting.
+
+If you do set it, note that POSIX timezone signs are **inverted**:
+
+| Value | Actual zone |
+| --- | --- |
+| `Asia/Shanghai` | UTC+8 (recommended; IANA name, handles DST) |
+| `UTC-8` | UTC+8 |
+| `Etc/GMT-8` | UTC+8 |
+| `UTC+8` | **UTC-8** (inverted — a common trap) |
 
 ## UI language
 
