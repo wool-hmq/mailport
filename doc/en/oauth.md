@@ -31,33 +31,26 @@ Outlook uses `smtp.office365.com:587`, Gmail uses `smtp.gmail.com`.
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/) and create a project.
 2. Go to "APIs & Services → Credentials → Create credentials → OAuth client ID", application type **Web application**.
-3. Under "Authorized redirect URIs" add the redirect URI shown in the dashboard.
+3. Fill in the two addresses below, then click "Create".
 4. Note the **Client ID** and **Client secret**.
 5. If prompted to configure the "OAuth consent screen" first, fill in the basic details (in test mode, add your own email as a test user).
 
-#### Gmail: authorization request URL
+#### Gmail: the two addresses to fill in Google Cloud
 
-When you click "Authorize", MailPort sends the user to the URL below. Use it as a reference to
-verify the redirect URI, scope, and other settings in your Google application:
+In the Google Cloud "OAuth client ID (Web application)" form you fill in two addresses, **both based on MailPort's own domain**:
 
-```
-https://accounts.google.com/o/oauth2/v2/auth
-  ?client_id=<your-client-id>
-  &redirect_uri=https://<your-domain>/api/<pid>/oauth/callback
-  &response_type=code
-  &scope=https://mail.google.com/
-  &access_type=offline
-  &prompt=consent
-  &state=<one-time token signed by MailPort>
-```
+| Google Cloud field | What to enter | Example |
+| --- | --- | --- |
+| Authorized JavaScript origins | The **site address** where MailPort is deployed (the origin of the outbound request) | `https://your-app.vercel.app` |
+| Authorized redirect URIs | MailPort's **callback address** (where the user is sent back after consent) | `https://your-app.vercel.app/api/{pid}/oauth/callback` |
 
-- `redirect_uri` is exactly the value to put in "Authorized redirect URIs"; it is unique per sender.
-- `scope=https://mail.google.com/` is the permission needed to send; `access_type=offline` together
-  with `prompt=consent` guarantees a long-lived refresh token.
-- `state` is generated and signed by MailPort automatically — you do not need to configure it.
+- The site address is your MailPort deployment domain, with no path and no trailing `/`.
+- The callback address = site address + `/api/{pid}/oauth/callback`, where `{pid}` is that sender's
+  identifier. It differs per sender — copy it from the sender configuration page.
+- The callback address must match Google **exactly**, or Google rejects the authorization with
+  `redirect_uri_mismatch`.
 
-> The redirect URI is unique per sender (it contains that sender's `pid`). Always copy it from the sender configuration page.
-> The redirect URI must be reachable from the public internet, so `localhost` only works for debugging the flow — deploy to Vercel or similar for real use.
+> The callback address must be reachable from the public internet, so `localhost` only works for debugging the flow — deploy to Vercel or similar for real use.
 
 ---
 

@@ -31,32 +31,24 @@ Outlook 走 `smtp.office365.com:587`,Gmail 走 `smtp.gmail.com`。
 
 1. 打开 [Google Cloud Console](https://console.cloud.google.com/),新建一个项目。
 2. 「API 和服务 → 凭据 → 创建凭据 → OAuth 客户端 ID」。应用类型选 **Web 应用**。
-3. 「已授权的重定向 URI」填入后台显示的**回调地址**。
+3. 按下表填好两个地址,再点击「创建」。
 4. 创建后记录 **客户端 ID** 和 **客户端密钥**。
 5. 如果界面提示需要先配置「OAuth 同意屏幕」,按提示填好基本信息(测试模式下填自己邮箱为测试用户即可)。
 
-#### Gmail:授权请求地址
+#### Gmail:在 Google 控制台要填的两个地址
 
-点击「去授权」时,MailPort 会用下面这个地址向 Google 发起认证请求。把它作为对照,
-可以在 Google 应用里核对重定向 URI、Scope 等设置是否一致:
+在 Google Cloud「OAuth 客户端 ID(Web 应用)」里需要填两个地址,**都以 MailPort 自己的域名为准**:
 
-```
-https://accounts.google.com/o/oauth2/v2/auth
-  ?client_id=<你的客户端 ID>
-  &redirect_uri=https://<你的域名>/api/<pid>/oauth/callback
-  &response_type=code
-  &scope=https://mail.google.com/
-  &access_type=offline
-  &prompt=consent
-  &state=<MailPort 签名的一次性校验值>
-```
+| Google 控制台字段 | 填什么 | 示例 |
+| --- | --- | --- |
+| 已授权的 JavaScript 来源 | MailPort 部署的**站点地址**(出站请求的来源) | `https://your-app.vercel.app` |
+| 已授权的重定向 URI | MailPort 的**回调地址**(授权后跳回这里) | `https://your-app.vercel.app/api/{pid}/oauth/callback` |
 
-- `redirect_uri` 就是「已授权的重定向 URI」里要填的那个地址,每个发件商不同。
-- `scope=https://mail.google.com/` 是发件所需权限;`access_type=offline` + `prompt=consent`
-  保证能拿到长期可用的 refresh token。
-- `state` 由 MailPort 自动生成签名,不需要你填写或配置。
+- 站点地址就是你部署 MailPort 的域名,不带路径,末尾不要加 `/`。
+- 回调地址 = 站点地址 + `/api/{pid}/oauth/callback`,其中 `{pid}` 是该发件商的标识,
+  每个发件商不同,以发件商配置页面显示的为准。
+- 回调地址必须与 Google 里填的**完全一致**,否则 Google 会拒绝授权(报 `redirect_uri_mismatch`)。
 
-> 每个发件商的回调地址不同(路径里带各自的 pid),以发件商配置页面显示的为准。
 > 回调地址必须能从公网访问,所以本地 `localhost` 只能用于调试流程,正式使用要部署到 Vercel 等平台。
 
 ---
