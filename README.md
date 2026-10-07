@@ -2,7 +2,7 @@
 
 Turn SMTP into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
 
-Docs: [English](./en) / [简体中文](./zh-cn)
+Docs: [English](./doc/en) / [简体中文](./doc/zh-cn)
 
 ## What it does
 
