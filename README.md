@@ -2,7 +2,7 @@
 
 Turn SMTP into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
 
-Docs: [English](./en) / [简体中文](./zh-cn)
+Docs: [English](./doc/en) / [简体中文](./doc/zh-cn)
 
 ## What it does
 
@@ -45,10 +45,10 @@ curl -X POST https://your-app.vercel.app/api/a1b2c3/send \
 
 | Topic | English | 简体中文 |
 | --- | --- | --- |
-| Environment variables | [en/env.md](./en/env.md) | [zh-cn/env.md](./zh-cn/env.md) |
-| Database schema | [en/database.md](./en/database.md) | [zh-cn/database.md](./zh-cn/database.md) |
-| API reference | [en/api.md](./en/api.md) | [zh-cn/api.md](./zh-cn/api.md) |
-| Deployment | [en/deploy.md](./en/deploy.md) | [zh-cn/deploy.md](./zh-cn/deploy.md) |
+| Environment variables | [en/env.md](./doc/en/env.md) | [zh-cn/env.md](./doc/zh-cn/env.md) |
+| Database schema | [en/database.md](./doc/en/database.md) | [zh-cn/database.md](./doc/zh-cn/database.md) |
+| API reference | [en/api.md](./doc/en/api.md) | [zh-cn/api.md](./doc/zh-cn/api.md) |
+| Deployment | [en/deploy.md](./doc/en/deploy.md) | [zh-cn/deploy.md](./doc/zh-cn/deploy.md) |
 
 ## Tech stack
 
