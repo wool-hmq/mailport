@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { api } from "@/lib/api";
+import { useT } from "@/components/locale-provider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useT();
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function LoginPage() {
       await api.login(password);
       router.replace("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed.");
+      setError(err instanceof Error ? err.message : t("login.failed"));
     } finally {
       setLoading(false);
     }
@@ -33,7 +35,7 @@ export default function LoginPage() {
             M
           </div>
           <h1 className="text-2xl font-bold">MailPort</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">SMTP to HTTP API gateway</p>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("brand.tagline")}</p>
         </div>
         <form
           onSubmit={handleSubmit}
@@ -41,7 +43,7 @@ export default function LoginPage() {
         >
           <div>
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
-              Admin password
+              {t("login.title")}
             </label>
             <input
               id="password"
@@ -51,7 +53,7 @@ export default function LoginPage() {
               autoFocus
               required
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-700"
-              placeholder="Enter admin password"
+              placeholder={t("login.placeholder")}
             />
           </div>
           {error ? (
@@ -64,7 +66,7 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? t("login.submitting") : t("login.submit")}
           </button>
         </form>
       </div>

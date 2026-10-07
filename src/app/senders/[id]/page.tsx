@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { api, type SendLog, type Sender, type SenderKey } from "@/lib/api";
 import { Nav } from "@/components/nav";
 import { SenderForm } from "@/components/sender-form";
+import { useT } from "@/components/locale-provider";
 
 export default function SenderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const t = useT();
   const [id, setId] = useState<string | null>(null);
   const [sender, setSender] = useState<Sender | null>(null);
   const [keys, setKeys] = useState<SenderKey[]>([]);
@@ -37,7 +39,7 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
       setKeys(detail.keys);
       setLogs(logsRes.rows);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load sender.");
+      setError(err instanceof Error ? err.message : t("detail.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -53,7 +55,7 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
               {error}
             </p>
           ) : (
-            <p className="text-sm text-gray-500">Loading...</p>
+            <p className="text-sm text-gray-500">{t("common.loading")}</p>
           )}
         </main>
       </div>
@@ -67,7 +69,7 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
         <div className="mb-6">
           <h1 className="text-xl font-bold">{sender.name}</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            Sending endpoint:{" "}
+            {t("detail.endpoint")}{" "}
             <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs dark:bg-gray-800">
               POST /api/{sender.pid}/send
             </code>
@@ -81,21 +83,28 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
         ) : null}
 
         <div className="mb-6 flex gap-1 border-b border-gray-200 dark:border-gray-800">
-          {(["keys", "settings", "logs"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={[
-                "-mb-px border-b-2 px-4 py-2 text-sm font-medium capitalize",
-                tab === t
-                  ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
-                  : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400",
-              ].join(" ")}
-            >
-              {t}
-            </button>
-          ))}
+          {(["keys", "settings", "logs"] as const).map((tabKey) => {
+            const labelKey = {
+              keys: "detail.tabKeys",
+              settings: "detail.tabSettings",
+              logs: "detail.tabLogs",
+            }[tabKey];
+            return (
+              <button
+                key={tabKey}
+                type="button"
+                onClick={() => setTab(tabKey)}
+                className={[
+                  "-mb-px border-b-2 px-4 py-2 text-sm font-medium",
+                  tab === tabKey
+                    ? "border-indigo-600 text-indigo-600 dark:text-indigo-400"
+                    : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400",
+                ].join(" ")}
+              >
+                {t(labelKey)}
+              </button>
+            );
+          })}
         </div>
 
         {tab === "keys" ? <KeysTab sender={sender} keys={keys} onChange={load} /> : null}
@@ -107,6 +116,7 @@ export default function SenderDetailPage({ params }: { params: Promise<{ id: str
 }
 
 function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]; onChange: () => void }) {
+  const t = useT();
   const [revealed, setRevealed] = useState<Record<string, boolean>>({});
   const [newLabel, setNewLabel] = useState("");
   const [busy, setBusy] = useState(false);
@@ -120,7 +130,7 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
       setNewLabel("");
       await onChange();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed to create key.");
+      setErr(e instanceof Error ? e.message : t("keys.createFailed"));
     } finally {
       setBusy(false);
     }
@@ -132,18 +142,18 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
       await api.patchKey(sender.id, key.id, { enabled: !key.enabled });
       await onChange();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed to update key.");
+      setErr(e instanceof Error ? e.message : t("keys.updateFailed"));
     }
   }
 
   async function handleDelete(key: SenderKey) {
-    if (!window.confirm(`Delete key "${key.label}"? Requests using it will be rejected immediately.`)) return;
+    if (!window.confirm(t("keys.deleteConfirm", { label: key.label }))) return;
     setErr(null);
     try {
       await api.deleteKey(sender.id, key.id);
       await onChange();
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed to delete key.");
+      setErr(e instanceof Error ? e.message : t("keys.deleteFailed"));
     }
   }
 
@@ -164,7 +174,7 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
       ) : null}
 
       <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm dark:border-indigo-900 dark:bg-indigo-950/30">
-        <div className="font-medium text-indigo-700 dark:text-indigo-300">How to call this sender</div>
+        <div className="font-medium text-indigo-700 dark:text-indigo-300">{t("keys.howTo")}</div>
         <pre className="mt-2 overflow-x-auto rounded bg-white p-3 text-xs dark:bg-gray-900">{`curl -X POST ${typeof window !== "undefined" ? window.location.origin : "https://your-app.vercel.app"}/api/${sender.pid}/send \\
   -H "Authorization: Bearer <your-api-key>" \\
   -H "Content-Type: application/json" \\
@@ -174,14 +184,14 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
       <div className="flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
         <div className="grow">
           <label className="mb-1.5 block text-sm font-medium" htmlFor="newKeyLabel">
-            New key label
+            {t("keys.newLabel")}
           </label>
           <input
             id="newKeyLabel"
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700"
-            placeholder="e.g. production server"
+            placeholder={t("keys.labelPlaceholder")}
           />
         </div>
         <button
@@ -190,12 +200,12 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
           disabled={busy}
           className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
         >
-          {busy ? "Generating..." : "+ Generate key"}
+          {busy ? t("keys.generating") : t("keys.generate")}
         </button>
       </div>
 
       {keys.length === 0 ? (
-        <p className="text-sm text-gray-500">No keys. Generate one to start sending.</p>
+        <p className="text-sm text-gray-500">{t("keys.empty")}</p>
       ) : (
         <ul className="divide-y divide-gray-200 overflow-hidden rounded-xl border border-gray-200 bg-white dark:divide-gray-800 dark:border-gray-800 dark:bg-gray-900">
           {keys.map((k) => {
@@ -206,16 +216,16 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
                   <span className="font-medium">{k.label}</span>
                   {k.enabled ? (
                     <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                      enabled
+                      {t("common.enabled")}
                     </span>
                   ) : (
                     <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                      disabled
+                      {t("common.disabled")}
                     </span>
                   )}
                   {k.lastUsedAt ? (
                     <span className="text-xs text-gray-500">
-                      last used {new Date(k.lastUsedAt).toLocaleString()}
+                      {t("keys.lastUsed", { time: new Date(k.lastUsedAt).toLocaleString() })}
                     </span>
                   ) : null}
                 </div>
@@ -228,14 +238,14 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
                     onClick={() => setRevealed((r) => ({ ...r, [k.id]: !r[k.id] }))}
                     className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                   >
-                    {shown ? "Hide" : "Show"}
+                    {shown ? t("common.hide") : t("common.show")}
                   </button>
                   <button
                     type="button"
                     onClick={() => copy(k.key)}
                     className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                   >
-                    Copy
+                    {t("common.copy")}
                   </button>
                 </div>
                 <div className="mt-3 flex gap-2">
@@ -244,14 +254,14 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
                     onClick={() => handleToggle(k)}
                     className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                   >
-                    {k.enabled ? "Disable" : "Enable"}
+                    {k.enabled ? t("keys.disable") : t("keys.enable")}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleDelete(k)}
                     className="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/40"
                   >
-                    Delete
+                    {t("common.delete")}
                   </button>
                 </div>
               </li>
@@ -264,6 +274,7 @@ function KeysTab({ sender, keys, onChange }: { sender: Sender; keys: SenderKey[]
 }
 
 function SettingsTab({ sender }: { sender: Sender }) {
+  const t = useT();
   const [to, setTo] = useState("");
   const [testMsg, setTestMsg] = useState<string | null>(null);
   const [testing, setTesting] = useState(false);
@@ -274,9 +285,9 @@ function SettingsTab({ sender }: { sender: Sender }) {
     setTesting(true);
     try {
       const res = await api.testSend(sender.id, to);
-      setTestMsg(`Sent. Message ID: ${res.messageId}`);
+      setTestMsg(t("settings.testSent", { id: res.messageId }));
     } catch (err) {
-      setTestMsg(err instanceof Error ? err.message : "Test failed.");
+      setTestMsg(err instanceof Error ? err.message : t("settings.testTitle"));
     } finally {
       setTesting(false);
     }
@@ -285,24 +296,24 @@ function SettingsTab({ sender }: { sender: Sender }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">SMTP configuration</h2>
+        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.smtpTitle")}</h2>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-xl border border-gray-200 bg-white p-4 text-sm dark:border-gray-800 dark:bg-gray-900 sm:grid-cols-2">
-          <Detail label="Type" value={sender.type} />
-          <Detail label="Service" value={sender.service} />
-          <Detail label="Host" value={sender.host} />
-          <Detail label="Port" value={sender.port?.toString()} />
-          <Detail label="Secure" value={sender.secure ? "yes" : "no"} />
-          <Detail label="Username" value={sender.username} />
-          <Detail label="From address" value={sender.fromAddress} />
-          <Detail label="From name" value={sender.fromName} />
+          <Detail label={t("settings.type")} value={sender.type} />
+          <Detail label={t("settings.service")} value={sender.service} />
+          <Detail label={t("settings.host")} value={sender.host} />
+          <Detail label={t("settings.port")} value={sender.port?.toString()} />
+          <Detail label={t("settings.secure")} value={sender.secure ? t("common.yes") : t("common.no")} />
+          <Detail label={t("settings.username")} value={sender.username} />
+          <Detail label={t("settings.fromAddress")} value={sender.fromAddress} />
+          <Detail label={t("settings.fromName")} value={sender.fromName} />
         </dl>
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">Allowed recipient domains</h2>
+        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.domainsTitle")}</h2>
         <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
           {sender.allowedDomains.length === 0 ? (
-            <p className="text-sm text-gray-500">No restriction — any recipient domain is allowed.</p>
+            <p className="text-sm text-gray-500">{t("settings.domainsEmpty")}</p>
           ) : (
             <ul className="flex flex-wrap gap-2">
               {sender.allowedDomains.map((d) => (
@@ -319,7 +330,7 @@ function SettingsTab({ sender }: { sender: Sender }) {
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">Send a test email</h2>
+        <h2 className="mb-3 text-sm font-bold uppercase text-gray-500">{t("settings.testTitle")}</h2>
         <form
           onSubmit={handleTest}
           className="space-y-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900"
@@ -327,7 +338,7 @@ function SettingsTab({ sender }: { sender: Sender }) {
           <div className="flex flex-wrap items-end gap-3">
             <div className="grow">
               <label className="mb-1.5 block text-sm font-medium" htmlFor="testTo">
-                Recipient
+                {t("settings.recipient")}
               </label>
               <input
                 id="testTo"
@@ -336,7 +347,7 @@ function SettingsTab({ sender }: { sender: Sender }) {
                 onChange={(e) => setTo(e.target.value)}
                 required
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm dark:border-gray-700"
-                placeholder="you@example.com"
+                placeholder={t("settings.recipientPlaceholder")}
               />
             </div>
             <button
@@ -344,7 +355,7 @@ function SettingsTab({ sender }: { sender: Sender }) {
               disabled={testing}
               className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
             >
-              {testing ? "Sending..." : "Send test"}
+              {testing ? t("settings.testing") : t("settings.testBtn")}
             </button>
           </div>
           {testMsg ? (
@@ -368,19 +379,20 @@ function Detail({ label, value }: { label: string; value?: string | null }) {
 }
 
 function LogsTab({ logs }: { logs: SendLog[] }) {
+  const t = useT();
   if (logs.length === 0) {
-    return <p className="text-sm text-gray-500">No send logs yet.</p>;
+    return <p className="text-sm text-gray-500">{t("logs.empty")}</p>;
   }
   return (
     <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
       <table className="w-full text-left text-sm">
         <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500 dark:border-gray-800 dark:bg-gray-950/40 dark:text-gray-400">
           <tr>
-            <th className="px-4 py-3">Time</th>
-            <th className="px-4 py-3">To</th>
-            <th className="px-4 py-3">Subject</th>
-            <th className="px-4 py-3">Status</th>
-            <th className="px-4 py-3">Error</th>
+            <th className="px-4 py-3">{t("logs.thTime")}</th>
+            <th className="px-4 py-3">{t("logs.thTo")}</th>
+            <th className="px-4 py-3">{t("logs.thSubject")}</th>
+            <th className="px-4 py-3">{t("logs.thStatus")}</th>
+            <th className="px-4 py-3">{t("logs.thError")}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -394,11 +406,11 @@ function LogsTab({ logs }: { logs: SendLog[] }) {
               <td className="px-4 py-3">
                 {l.status === "success" ? (
                   <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                    success
+                    {t("home.statSuccess")}
                   </span>
                 ) : (
                   <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-700 dark:bg-red-950/40 dark:text-red-400">
-                    failed
+                    {t("home.statFailed")}
                   </span>
                 )}
               </td>

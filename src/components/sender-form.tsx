@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { api, type Sender } from "@/lib/api";
 import { Nav } from "@/components/nav";
+import { useT } from "@/components/locale-provider";
 
 export interface SenderFormProps {
   mode: "create" | "edit";
@@ -13,6 +14,7 @@ export interface SenderFormProps {
 
 export function SenderForm({ mode, sender }: SenderFormProps) {
   const router = useRouter();
+  const t = useT();
   const [name, setName] = useState(sender?.name ?? "");
   const [host, setHost] = useState(sender?.host ?? "");
   const [port, setPort] = useState(sender?.port?.toString() ?? "465");
@@ -61,7 +63,7 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
       }
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save sender.");
+      setError(err instanceof Error ? err.message : t("form.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -72,7 +74,7 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
       <Nav />
       <main className="mx-auto max-w-3xl px-4 py-8">
         <h1 className="mb-6 text-xl font-bold">
-          {mode === "create" ? "New sender" : `Edit ${sender?.name}`}
+          {mode === "create" ? t("form.newTitle") : t("form.editTitle", { name: sender?.name ?? "" })}
         </h1>
         {error ? (
           <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/40 dark:text-red-400">
@@ -83,42 +85,42 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
           onSubmit={handleSubmit}
           className="space-y-5 rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900"
         >
-          <Field label="Name" hint="A label to identify this sender in the dashboard.">
+          <Field label={t("common.name")} hint={t("form.nameHint")}>
             <input
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
               className={inputClass}
-              placeholder="My blog mailer"
+              placeholder={t("form.namePlaceholder")}
             />
           </Field>
 
-          <Field label="SMTP service" hint="Optional. Set to skip host/port (e.g. QQ, Gmail, Outlook).">
+          <Field label={t("form.service")} hint={t("form.serviceHint")}>
             <input
               value={service}
               onChange={(e) => setService(e.target.value)}
               className={inputClass}
-              placeholder="QQ"
+              placeholder={t("form.servicePlaceholder")}
             />
           </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="SMTP host" hint="Required unless a service is set.">
+            <Field label={t("form.host")} hint={t("form.hostHint")}>
               <input
                 value={host}
                 onChange={(e) => setHost(e.target.value)}
                 className={inputClass}
-                placeholder="smtp.example.com"
+                placeholder={t("form.hostPlaceholder")}
                 disabled={usingService}
               />
             </Field>
-            <Field label="SMTP port">
+            <Field label={t("form.port")}>
               <input
                 type="number"
                 value={port}
                 onChange={(e) => setPort(e.target.value)}
                 className={inputClass}
-                placeholder="465"
+                placeholder={t("form.portPlaceholder")}
                 disabled={usingService}
               />
             </Field>
@@ -126,69 +128,66 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
 
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={secure} onChange={(e) => setSecure(e.target.checked)} disabled={usingService} />
-            Use SSL/TLS (usually port 465)
+            {t("form.secure")}
           </label>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Username" hint="The SMTP login account.">
+            <Field label={t("form.username")} hint={t("form.usernameHint")}>
               <input
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className={inputClass}
-                placeholder="user@example.com"
+                placeholder={t("form.usernamePlaceholder")}
               />
             </Field>
             <Field
-              label="Password"
-              hint={mode === "edit" ? "Leave blank to keep the current password." : "SMTP password or app-specific token."}
+              label={t("form.password")}
+              hint={mode === "edit" ? t("form.passwordHintEdit") : t("form.passwordHintCreate")}
             >
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={inputClass}
-                placeholder={mode === "edit" ? "unchanged" : "••••••••"}
+                placeholder={mode === "edit" ? t("form.passwordPlaceholderEdit") : "••••••••"}
                 required={mode === "create"}
               />
             </Field>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="From address" hint="Optional. Defaults to the username.">
+            <Field label={t("form.fromAddress")} hint={t("form.fromAddressHint")}>
               <input
                 value={fromAddress}
                 onChange={(e) => setFromAddress(e.target.value)}
                 className={inputClass}
-                placeholder="noreply@example.com"
+                placeholder={t("form.fromAddressPlaceholder")}
               />
             </Field>
-            <Field label="From name" hint="Optional display name.">
+            <Field label={t("form.fromName")} hint={t("form.fromNameHint")}>
               <input
                 value={fromName}
                 onChange={(e) => setFromName(e.target.value)}
                 className={inputClass}
-                placeholder="My Blog"
+                placeholder={t("form.fromNamePlaceholder")}
               />
             </Field>
           </div>
 
-          <Field
-            label="Allowed recipient domains"
-            hint="One domain per line or comma separated. Empty means no restriction. Configured per sender and stored in the database."
-          >
+          <Field label={t("form.domains")} hint={t("form.domainsHint")}>
             <textarea
               value={domains}
               onChange={(e) => setDomains(e.target.value)}
               rows={4}
               className={`${inputClass} font-mono`}
-              placeholder={"example.com\ngmail.com"}
+              placeholder={t("form.domainsPlaceholder")}
             />
           </Field>
 
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
-            Enabled (endpoint returns 404 while disabled)
+            {t("form.enabledHint")}
           </label>
 
           <div className="flex justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-800">
@@ -197,14 +196,14 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
               onClick={() => router.back()}
               className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               disabled={saving}
               className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
             >
-              {saving ? "Saving..." : mode === "create" ? "Create sender" : "Save changes"}
+              {saving ? t("form.saving") : mode === "create" ? t("form.createBtn") : t("form.saveBtn")}
             </button>
           </div>
         </form>

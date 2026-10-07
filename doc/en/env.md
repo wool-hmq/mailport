@@ -75,8 +75,22 @@ Local development and VPS only. **Not usable on Vercel Serverless** (read-only f
 
 | Variable | Default | Description |
 | --- | --- | --- |
+| `SITE_LOCALE` | `en` | Default UI locale. Values: `en`, `zh-cn` |
 | `SESSION_TTL` | `604800` (7 days) | Admin session lifetime, in seconds |
 | `TZ` | `UTC` | Timezone, affects log timestamp rendering |
+
+## UI language
+
+Set `SITE_LOCALE` to choose the dashboard's default language:
+
+| Value | Language |
+| --- | --- |
+| `en` | English (default) |
+| `zh-cn` | Simplified Chinese |
+
+An invalid or missing value falls back to English.
+
+Users can also switch language from the dropdown in the top-right corner of the dashboard. The choice is stored in a cookie that overrides the environment default for one year. To add another language, see the notes in `src/i18n/`.
 
 ## Detection order
 

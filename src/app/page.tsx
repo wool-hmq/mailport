@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 
 import { api, type Sender } from "@/lib/api";
 import { Nav } from "@/components/nav";
+import { useT } from "@/components/locale-provider";
 
 export default function HomePage() {
+  const t = useT();
   const [senders, setSenders] = useState<Sender[]>([]);
   const [stats, setStats] = useState<{ senders: number; logs: { total: number; success: number; failed: number } } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,21 +26,21 @@ export default function HomePage() {
       setSenders(sendersRes.rows);
       setStats(statsRes);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load senders.");
+      setError(err instanceof Error ? err.message : t("home.loadFailed"));
     } finally {
       setLoading(false);
     }
   }
 
   async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete sender "${name}"? Its endpoint and all keys will stop working immediately.`)) {
+    if (!window.confirm(t("home.deleteConfirm", { name }))) {
       return;
     }
     try {
       await api.deleteSender(id);
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete sender.");
+      setError(err instanceof Error ? err.message : t("home.loadFailed"));
     }
   }
 
@@ -48,25 +50,25 @@ export default function HomePage() {
       <main className="mx-auto max-w-6xl px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold">Senders</h1>
+            <h1 className="text-xl font-bold">{t("home.title")}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Each sender has its own sending endpoint and API keys.
+              {t("home.subtitle")}
             </p>
           </div>
           <Link
             href="/senders/new"
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
           >
-            New sender
+            {t("home.newSender")}
           </Link>
         </div>
 
         {stats ? (
           <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Senders" value={stats.senders} />
-            <StatCard label="Total sends" value={stats.logs.total} />
-            <StatCard label="Success" value={stats.logs.success} accent="text-emerald-600 dark:text-emerald-400" />
-            <StatCard label="Failed" value={stats.logs.failed} accent="text-red-600 dark:text-red-400" />
+            <StatCard label={t("home.statSenders")} value={stats.senders} />
+            <StatCard label={t("home.statTotal")} value={stats.logs.total} />
+            <StatCard label={t("home.statSuccess")} value={stats.logs.success} accent="text-emerald-600 dark:text-emerald-400" />
+            <StatCard label={t("home.statFailed")} value={stats.logs.failed} accent="text-red-600 dark:text-red-400" />
           </div>
         ) : null}
 
@@ -77,15 +79,15 @@ export default function HomePage() {
         ) : null}
 
         {loading ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-gray-500">{t("common.loading")}</p>
         ) : senders.length === 0 ? (
           <div className="rounded-xl border border-dashed border-gray-300 p-12 text-center dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400">No senders yet.</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t("home.empty")}</p>
             <Link
               href="/senders/new"
               className="mt-3 inline-block rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
             >
-              Create your first sender
+              {t("home.createFirst")}
             </Link>
           </div>
         ) : (
@@ -93,11 +95,11 @@ export default function HomePage() {
             <table className="w-full text-left text-sm">
               <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500 dark:border-gray-800 dark:bg-gray-950/40 dark:text-gray-400">
                 <tr>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Endpoint</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-4 py-3">{t("home.thName")}</th>
+                  <th className="px-4 py-3">{t("home.thEndpoint")}</th>
+                  <th className="px-4 py-3">{t("home.thType")}</th>
+                  <th className="px-4 py-3">{t("home.thStatus")}</th>
+                  <th className="px-4 py-3 text-right">{t("home.thActions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -121,11 +123,11 @@ export default function HomePage() {
                     <td className="px-4 py-3">
                       {s.enabled ? (
                         <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400">
-                          enabled
+                          {t("common.enabled")}
                         </span>
                       ) : (
                         <span className="rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                          disabled
+                          {t("common.disabled")}
                         </span>
                       )}
                     </td>
@@ -134,14 +136,14 @@ export default function HomePage() {
                         href={`/senders/${s.id}`}
                         className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                       >
-                        Manage
+                        {t("home.manage")}
                       </Link>
                       <button
                         type="button"
                         onClick={() => handleDelete(s.id, s.name)}
                         className="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950/40"
                       >
-                        Delete
+                        {t("common.delete")}
                       </button>
                     </td>
                   </tr>
