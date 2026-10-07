@@ -35,6 +35,27 @@ Outlook 走 `smtp.office365.com:587`,Gmail 走 `smtp.gmail.com`。
 4. 创建后记录 **客户端 ID** 和 **客户端密钥**。
 5. 如果界面提示需要先配置「OAuth 同意屏幕」,按提示填好基本信息(测试模式下填自己邮箱为测试用户即可)。
 
+#### Gmail:授权请求地址
+
+点击「去授权」时,MailPort 会用下面这个地址向 Google 发起认证请求。把它作为对照,
+可以在 Google 应用里核对重定向 URI、Scope 等设置是否一致:
+
+```
+https://accounts.google.com/o/oauth2/v2/auth
+  ?client_id=<你的客户端 ID>
+  &redirect_uri=https://<你的域名>/api/<pid>/oauth/callback
+  &response_type=code
+  &scope=https://mail.google.com/
+  &access_type=offline
+  &prompt=consent
+  &state=<MailPort 签名的一次性校验值>
+```
+
+- `redirect_uri` 就是「已授权的重定向 URI」里要填的那个地址,每个发件商不同。
+- `scope=https://mail.google.com/` 是发件所需权限;`access_type=offline` + `prompt=consent`
+  保证能拿到长期可用的 refresh token。
+- `state` 由 MailPort 自动生成签名,不需要你填写或配置。
+
 > 每个发件商的回调地址不同(路径里带各自的 pid),以发件商配置页面显示的为准。
 > 回调地址必须能从公网访问,所以本地 `localhost` 只能用于调试流程,正式使用要部署到 Vercel 等平台。
 

@@ -35,6 +35,27 @@ Outlook uses `smtp.office365.com:587`, Gmail uses `smtp.gmail.com`.
 4. Note the **Client ID** and **Client secret**.
 5. If prompted to configure the "OAuth consent screen" first, fill in the basic details (in test mode, add your own email as a test user).
 
+#### Gmail: authorization request URL
+
+When you click "Authorize", MailPort sends the user to the URL below. Use it as a reference to
+verify the redirect URI, scope, and other settings in your Google application:
+
+```
+https://accounts.google.com/o/oauth2/v2/auth
+  ?client_id=<your-client-id>
+  &redirect_uri=https://<your-domain>/api/<pid>/oauth/callback
+  &response_type=code
+  &scope=https://mail.google.com/
+  &access_type=offline
+  &prompt=consent
+  &state=<one-time token signed by MailPort>
+```
+
+- `redirect_uri` is exactly the value to put in "Authorized redirect URIs"; it is unique per sender.
+- `scope=https://mail.google.com/` is the permission needed to send; `access_type=offline` together
+  with `prompt=consent` guarantees a long-lived refresh token.
+- `state` is generated and signed by MailPort automatically — you do not need to configure it.
+
 > The redirect URI is unique per sender (it contains that sender's `pid`). Always copy it from the sender configuration page.
 > The redirect URI must be reachable from the public internet, so `localhost` only works for debugging the flow — deploy to Vercel or similar for real use.
 
