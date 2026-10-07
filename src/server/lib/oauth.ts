@@ -3,10 +3,13 @@
  *
  * 流程:
  * 1. 管理员在发件商配置里填写 Client ID / Client Secret,保存
- * 2. 点击"去授权",跳转到 provider 的授权页(redirect_uri 为 /api/{pid}/oauth/callback)
+ * 2. 点击"去授权",跳转到 provider 的授权页(redirect_uri 为 /api/oauth/callback)
  * 3. 用户同意后 provider 回调本应用,后端用 code 换 access/refresh token
  * 4. refresh token 加密入库,之后发件走 SMTP XOAUTH2
  *
+ * 回调地址是固定值 /api/oauth/callback,不含发件商信息,因此可以在创建发件商
+ * 之前就填进 provider 控制台,不会陷入"要回调地址才能建应用、要建应用才有发件商"的死循环。
+ * 具体是哪个发件商,由签名的 state(携带发件商 id)在回调时定位。
  * state 用 MAILPORT_SECRET 签名的 JWT,携带发件商 id 与过期时间,防 CSRF。
  */
 
@@ -55,9 +58,9 @@ function provider(sender: Sender): ProviderConfig {
   return PROVIDERS[sender.type];
 }
 
-/** 回调地址:每个发件商独立,用其 pid 作为路由标识 */
-export function getCallbackUrl(origin: string, sender: Sender): string {
-  return `${origin.replace(/\/$/, "")}/api/${sender.pid}/oauth/callback`;
+/** 固定的 OAuth 回调地址,所有发件商共用;发件商由签名的 state 定位 */
+export function getCallbackUrl(origin: string): string {
+  return `${origin.replace(/\/$/, "")}/api/oauth/callback`;
 }
 
 async function signState(senderId: string): Promise<string> {
@@ -85,7 +88,7 @@ export async function buildAuthUrl(origin: string, sender: Sender): Promise<stri
   if (!sender.oauthClientId) {
     throw new Error("OAuth clientId is required before authorization.");
   }
-  const redirectUri = getCallbackUrl(origin, sender);
+  const redirectUri = getCallbackUrl(origin);
   const params = new URLSearchParams({
     client_id: sender.oauthClientId,
     redirect_uri: redirectUri,

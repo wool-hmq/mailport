@@ -382,7 +382,7 @@ function SettingsTab({ sender }: { sender: Sender }) {
               <dt className="text-gray-500 dark:text-gray-400">{t("settings.oauthCallback")}</dt>
               <dd className="mt-1">
                 <code className="block break-all rounded bg-gray-100 p-2 font-mono text-xs dark:bg-gray-800">
-                  {origin}/api/{sender.pid}/oauth/callback
+                  {origin}/api/oauth/callback
                 </code>
               </dd>
             </div>

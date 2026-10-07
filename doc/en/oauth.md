@@ -8,9 +8,15 @@ IMAP tokens needed in the mailbox itself. After authorization, mail is delivered
 ## Flow
 
 ```
-dashboard: Client ID / Secret  →  click "Authorize"  →  provider consent page
-   →  callback /api/{pid}/oauth/callback  →  refresh token stored encrypted  →  ready to send
+register the app with the provider (fill in the fixed callback URL)
+  →  dashboard: Client ID / Secret  →  click "Authorize"  →  provider consent page
+  →  callback /api/oauth/callback  →  refresh token stored encrypted  →  ready to send
 ```
+
+> The callback URL is a **fixed value** `https://<your-domain>/api/oauth/callback` with no sender
+> information in it. So you can fill it into Azure/Google **before creating any sender** — no circular
+> dependency between "you need the callback URL to create the app" and "you need the sender to see the
+> callback URL". Which sender is being authorized is determined at callback time by the signed `state`.
 
 When sending, MailPort exchanges the refresh token for an access token and logs in via SMTP XOAUTH2:
 Outlook uses `smtp.office365.com:587`, Gmail uses `smtp.gmail.com`.
@@ -23,7 +29,7 @@ Outlook uses `smtp.office365.com:587`, Gmail uses `smtp.gmail.com`.
 
 1. Open [Azure portal → App registrations](https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade) and click "New registration".
 2. Pick any name; for "Supported account types" choose "Accounts in any organizational directory and personal Microsoft accounts".
-3. Under "Redirect URI" select **Web** and paste the **redirect URI** shown on the sender page in the dashboard (e.g. `https://xxx.vercel.app/api/{pid}/oauth/callback`).
+3. Under "Redirect URI" select **Web** and enter the fixed callback URL `https://xxx.vercel.app/api/oauth/callback` (replace the domain with where you deployed MailPort).
 4. After registering, the **Application (client) ID** on the Overview page is your Client ID.
 5. Under "Certificates & secrets → New client secret", create a secret and **copy its Value** — it is only shown once.
 
@@ -42,11 +48,11 @@ In the Google Cloud "OAuth client ID (Web application)" form you fill in two add
 | Google Cloud field | What to enter | Example |
 | --- | --- | --- |
 | Authorized JavaScript origins | The **site address** where MailPort is deployed (the origin of the outbound request) | `https://your-app.vercel.app` |
-| Authorized redirect URIs | MailPort's **callback address** (where the user is sent back after consent) | `https://your-app.vercel.app/api/{pid}/oauth/callback` |
+| Authorized redirect URIs | The fixed **callback address** | `https://your-app.vercel.app/api/oauth/callback` |
 
 - The site address is your MailPort deployment domain, with no path and no trailing `/`.
-- The callback address = site address + `/api/{pid}/oauth/callback`, where `{pid}` is that sender's
-  identifier. It differs per sender — copy it from the sender configuration page.
+- The callback address is fixed: site address + `/api/oauth/callback`. It is the same for every sender,
+  so you can enter it before creating any sender.
 - The callback address must match Google **exactly**, or Google rejects the authorization with
   `redirect_uri_mismatch`.
 
@@ -105,5 +111,5 @@ MailPort requests only the minimum needed to send:
 ## Security notes
 
 - Client secrets and refresh tokens are encrypted at rest with AES-256-GCM and never echoed back to the frontend.
-- The `state` parameter in the callback is signed with `MAILPORT_SECRET` (valid for 10 minutes) to prevent CSRF.
+- The `state` parameter in the callback is signed with `MAILPORT_SECRET` (valid for 10 minutes): it prevents CSRF and identifies which sender the fixed callback belongs to.
 - The callback endpoint is public, but its only capability is writing the authorization token — it never exposes existing credentials.

@@ -120,11 +120,10 @@ export default {
   "form.oauthClientSecretPlaceholderEdit": "unchanged",
   "form.oauthCallback": "Redirect URI",
   "form.oauthCallbackHint":
-    "Add this URI to your application's OAuth redirect whitelist. It is unique per sender.",
+    "All senders share this one callback URL. Add it to your application's OAuth redirect whitelist — no need to save the sender first.",
   "form.oauthAuthorizeBtn": "Authorize",
   "form.oauthReauthorizeBtn": "Re-authorize",
   "form.oauthAuthorizing": "Redirecting to authorization...",
-  "form.oauthSaveFirst": "Save the sender configuration first",
 
   "detail.oauthSuccess": "OAuth authorization succeeded. This sender is ready to send.",
   "detail.oauthCallbackLabel": "OAuth redirect URI:",

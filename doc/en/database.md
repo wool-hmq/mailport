@@ -11,7 +11,7 @@ Each row is an independent sending channel with its own endpoint, keys, and reci
 | Field | Type | Description |
 | --- | --- | --- |
 | `id` | TEXT / VARCHAR(64) | Primary key, UUID |
-| `pid` | TEXT, unique | Route id. A random 5–10 char alphanumeric generated on creation, used to build `/api/{pid}/send` and the OAuth callback `/api/{pid}/oauth/callback` |
+| `pid` | TEXT, unique | Route id. A random 5–10 char alphanumeric generated on creation, used to build the send endpoint `/api/{pid}/send` |
 | `name` | TEXT | Display name, dashboard only |
 | `type` | TEXT | Delivery method: `smtp` (account/password), `http` (HTTP API forwarding), `outlook_oauth2`, `gmail_oauth2` |
 | `enabled` | BOOLEAN | When disabled the endpoint returns 404 |

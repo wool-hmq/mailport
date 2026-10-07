@@ -11,7 +11,7 @@ MailPort 共三张表( MongoDB 中为三个集合)。应用首次启动时自动
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `id` | TEXT / VARCHAR(64) | 主键,UUID |
-| `pid` | TEXT,唯一 | 路由标识。创建时随机生成的 5–10 位字母数字,用于拼接接口路径 `/api/{pid}/send` 与回调路径 `/api/{pid}/oauth/callback` |
+| `pid` | TEXT,唯一 | 路由标识。创建时随机生成的 5–10 位字母数字,用于拼接发件接口路径 `/api/{pid}/send` |
 | `name` | TEXT | 显示名称,仅用于后台识别 |
 | `type` | TEXT | 发件方式:`smtp`(账号密码)、`http`(HTTP API 转发)、`outlook_oauth2`、`gmail_oauth2` |
 | `enabled` | BOOLEAN | 是否启用。禁用后接口返回 404 |

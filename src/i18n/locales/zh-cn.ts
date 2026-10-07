@@ -114,11 +114,10 @@ export default {
   "form.oauthClientSecretPlaceholderEdit": "不修改",
   "form.oauthCallback": "回调地址",
   "form.oauthCallbackHint":
-    "把该地址填写到应用的 OAuth 重定向 URI 白名单中,每个发件商地址不同。",
+    "所有发件商共用这一个回调地址。把它填到应用的 OAuth 重定向 URI 白名单即可,无需先保存发件商。",
   "form.oauthAuthorizeBtn": "去授权",
   "form.oauthReauthorizeBtn": "重新授权",
   "form.oauthAuthorizing": "正在跳转授权页...",
-  "form.oauthSaveFirst": "请先保存发件商配置",
 
   "detail.oauthSuccess": "OAuth 授权成功,该发件商已可发件。",
   "detail.oauthCallbackLabel": "OAuth 回调地址:",

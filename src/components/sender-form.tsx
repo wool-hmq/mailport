@@ -41,7 +41,7 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
   const usingService = service.trim().length > 0;
   const isOAuth = type === "outlook_oauth2" || type === "gmail_oauth2";
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  const callbackUrl = sender && origin ? `${origin}/api/${sender.pid}/oauth/callback` : "";
+  const callbackUrl = `${origin}/api/oauth/callback`;
 
   function buildBody(): Record<string, unknown> {
     const body: Record<string, unknown> = {
@@ -313,21 +313,15 @@ export function SenderForm({ mode, sender }: SenderFormProps) {
             <section className="space-y-5 border-t border-gray-200 pt-5 dark:border-gray-800">
               <h2 className="text-sm font-bold uppercase text-gray-500">{t("form.oauthSection")}</h2>
 
-              {callbackUrl ? (
-                <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm dark:border-indigo-900 dark:bg-indigo-950/30">
-                  <div className="font-medium text-indigo-700 dark:text-indigo-300">
-                    {t("form.oauthCallback")}
-                  </div>
-                  <code className="mt-1 block break-all font-mono text-xs">{callbackUrl}</code>
-                  <p className="mt-2 text-xs text-indigo-700/80 dark:text-indigo-300/80">
-                    {t("form.oauthCallbackHint")}
-                  </p>
+              <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-4 text-sm dark:border-indigo-900 dark:bg-indigo-950/30">
+                <div className="font-medium text-indigo-700 dark:text-indigo-300">
+                  {t("form.oauthCallback")}
                 </div>
-              ) : (
-                <p className="rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-500 dark:border-gray-800 dark:bg-gray-950/40">
-                  {t("form.oauthSaveFirst")}
+                <code className="mt-1 block break-all font-mono text-xs">{callbackUrl}</code>
+                <p className="mt-2 text-xs text-indigo-700/80 dark:text-indigo-300/80">
+                  {t("form.oauthCallbackHint")}
                 </p>
-              )}
+              </div>
 
               <Field label={t("form.accountEmail")} hint={t("form.accountEmailHint")}>
                 <input

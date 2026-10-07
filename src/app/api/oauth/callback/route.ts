@@ -1,9 +1,8 @@
 /**
- * OAuth 授权回调(兼容保留)。
- * GET /api/{pid}/oauth/callback?code=...&state=...
+ * OAuth 授权回调(公开接口,由 provider 直接跳转)
+ * GET /api/oauth/callback?code=...&state=...
  *
- * 早期回调地址带发件商 pid,现已统一为固定的 /api/oauth/callback
- * (发件商由签名的 state 定位),此路由仅为兼容旧配置保留。
+ * 回调地址固定不变,发件商由签名的 state 定位,详见 server/lib/oauth-callback.ts。
  */
 
 import { json } from "@/server/lib/api";

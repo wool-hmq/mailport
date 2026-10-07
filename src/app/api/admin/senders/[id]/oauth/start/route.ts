@@ -3,7 +3,7 @@
  * POST /api/admin/senders/{id}/oauth/start -> { authUrl }
  *
  * 前端拿到 authUrl 后跳转,用户在 provider 页面同意授权后
- * 会被回调到 /api/{pid}/oauth/callback。
+ * 会被回调到固定的 /api/oauth/callback(发件商由签名的 state 定位)。
  */
 
 import { getStorage } from "@/server/lib/db";
