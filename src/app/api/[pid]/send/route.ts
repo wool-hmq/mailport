@@ -16,6 +16,10 @@ interface SendBody {
   subject?: string;
   text?: string;
   html?: string;
+  /** 内嵌图片(PNG base64,不含 data: 前缀),用于邮件验证码等人机验证场景 */
+  imageBase64?: string;
+  /** 正文 html 中 <img src="cid:..."> 引用的唯一标识 */
+  cid?: string;
 }
 
 export async function POST(
@@ -65,8 +69,25 @@ export async function POST(
       );
     }
 
+    // 内嵌图片校验:必须是合法 base64 且带有 cid,正文才能通过 <img src="cid:..."> 引用。
+    let inlineImage: { imageBase64: string; cid: string } | undefined;
+    if (body.imageBase64 !== undefined || body.cid !== undefined) {
+      if (!body.imageBase64 || !body.cid) {
+        return errorResponse("Both imageBase64 and cid are required to embed an inline image.", 400);
+      }
+      const trimmed = body.imageBase64.trim();
+      if (!/^[A-Za-z0-9+/=]+$/.test(trimmed)) {
+        return errorResponse("imageBase64 must be valid base64 without a data: prefix.", 400);
+      }
+      // 限制 2MiB,避免超大附件拖垮 serverless
+      if (trimmed.length > 2 * 1024 * 1024) {
+        return errorResponse("imageBase64 exceeds the 2MiB limit.", 413);
+      }
+      inlineImage = { imageBase64: trimmed, cid: body.cid };
+    }
+
     try {
-      const result = await sendMail(sender, { to, subject, text, html });
+      const result = await sendMail(sender, { to, subject, text, html, inlineImage });
       await storage.touchSenderKey(keyRecord.id, Date.now());
       await storage.createSendLog({
         senderId: sender.id,

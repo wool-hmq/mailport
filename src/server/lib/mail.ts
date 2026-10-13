@@ -124,13 +124,25 @@ async function sendViaMailTransporter(sender: Sender, input: SendMailInput): Pro
       ? `"${sender.fromName}" <${sender.fromAddress}>`
       : sender.fromAddress
     : sender.username!;
-  const info = await transporter.sendMail({
+  const mailOptions: nodemailer.SendMailOptions = {
     from,
     to: input.to,
     subject: input.subject,
     text: input.text,
     html: input.html,
-  });
+  };
+  if (input.inlineImage) {
+    // 带 cid 的附件默认以 inline 方式随 multipart/related 发送,
+    // 正文 html 用 <img src="cid:..."> 即可引用,验证码答案不会出现在正文中。
+    mailOptions.attachments = [
+      {
+        filename: "captcha.png",
+        content: Buffer.from(input.inlineImage.imageBase64, "base64"),
+        cid: input.inlineImage.cid,
+      },
+    ];
+  }
+  const info = await transporter.sendMail(mailOptions);
   return { messageId: info.messageId };
 }
 
@@ -199,6 +211,11 @@ export interface SendMailInput {
   subject: string;
   text?: string;
   html?: string;
+  /** 内嵌图片(如验证码),正文通过 <img src="cid:..."> 引用 */
+  inlineImage?: {
+    imageBase64: string;
+    cid: string;
+  };
 }
 
 export interface SendMailResult {
