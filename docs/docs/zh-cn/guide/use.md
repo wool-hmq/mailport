@@ -24,8 +24,8 @@
 2. 填写信息，并点击 **新建**。
 
 > [!Note]  
-> Oauth 发件配置教程：[《Outlook / Gmail OAuth 发件》](./guide/oauth)  
-> HTTP API 发件配置教程：[《HTTP API 发件商》](./guide/http-sender)
+> Oauth 发件配置教程：[《Outlook / Gmail OAuth 发件》](./oauth)  
+> HTTP API 发件配置教程：[《HTTP API 发件商》](./http-sender)
 
 3. 如图，自动跳转该发件商的设置（密钥）页面。
 
