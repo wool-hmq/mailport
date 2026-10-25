@@ -14,7 +14,7 @@ MailPort 是标准 Next.js 应用,部署到 Vercel 只需三步。
 
 [![Vercel Deploy](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwool-hmq%2Fmailport%2Ftree%2Fmain%2Fexample)
 
-> [!TIP]  
+> [!TIP]
 > 如果你未登录的话，Vercel 会让你注册或登录，建议使用 GitHub 账户进行快捷登录。
 
 ### 2. 创建数据库
