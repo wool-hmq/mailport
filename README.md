@@ -1,3 +1,5 @@
+![Cover](./docs/docs/public/mailport-logo.png)
+
 # MailPort
 
 Turn email sending into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
