@@ -4,6 +4,9 @@ pageType: home
 hero:
   tagline: 把邮件发送变成 HTTP API
   description: 每个发件商拥有独立接口与 API 密钥，在网页控制台中统一管理
+  image:
+    src: /mailport-logo.png
+    alt: MailPort
   actions:
     - theme: brand
       text: API 参考

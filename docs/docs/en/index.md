@@ -4,6 +4,9 @@ pageType: home
 hero:
   tagline: Turn email sending into an HTTP API
   description: One endpoint and API key set per sender, managed from a web dashboard
+  image:
+    src: /mailport-logo.png
+    alt: MailPort
   actions:
     - theme: brand
       text: API Reference
