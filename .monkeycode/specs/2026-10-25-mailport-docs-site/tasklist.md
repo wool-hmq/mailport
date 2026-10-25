@@ -13,7 +13,7 @@ Updated: 2026-10-25
 | 4 | 添加站点图标与双语首页 | Done | `docs/docs/public/mailport-icon.svg`、`docs/docs/index.md`、`docs/docs/en/index.md` |
 | 5 | 配置顶部导航与全局侧边栏 | Done | 每个语言目录含 `_nav.json` 与 v2 格式 `_meta.json` |
 | 6 | 本地构建验证 | Done | `npm run build` 通过，产物含根路径首页与 `en/` 页面，资源带 `/mailport/` 前缀 |
-| 7 | 更新 README 文档链接 | Done | 入口指向 `https://wool-hmq.github.io/mailport/`，表格链接改为 `docs/docs/...` |
+| 7 | 更新 README 文档链接 | Done | 入口指向 `https://mailport.lab.j3.ink/`，表格链接改为 `docs/docs/...` |
 | 8 | 新增 `.github/workflows/docs.yml` | Done | Node 20 + `npm ci` + `actions/deploy-pages` |
 | 9 | 本地开发服务器预览 | Done | `npm run dev` 启动（端口 4173），通过平台预览地址验证后已停止 |
 | 10 | 提交并推送到 `main` | Done | 提交 `376902e`，推送至 `wool-hmq/mailport` main |
@@ -25,4 +25,4 @@ Updated: 2026-10-25
 - 产物检查：`doc_build/index.html`（简体中文首页）、`doc_build/en/index.html`（English 首页）、`doc_build/api.html` 与 `doc_build/en/api.html` 均存在。
 - 侧边栏检查：两种语言的 `api.html` 均渲染六篇文档入口。
 - 首页链接检查：简体中文首页指向 `/mailport/api.html`，English 首页指向 `/mailport/en/api.html`。
-- 线上验证：`https://wool-hmq.github.io/mailport/`、`/api.html`、`/en/api.html` 与 CSS 资源均返回 200；Actions 运行 `40146757267` 结论为 success。
+- 线上验证：`https://mailport.lab.j3.ink/`、`/api.html`、`/en/api.html` 与 CSS 资源均可访问；GitHub Pages 工作流运行 `40146757267` 结论为 success。

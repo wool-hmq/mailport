@@ -17,7 +17,7 @@ flowchart LR
     B --> C["安装 docs 依赖"]
     C --> D["Rspress 构建"]
     D --> E["产物 docs/doc_build"]
-    E --> F["GitHub Pages 站点"]
+    E --> F["GitHub Pages 站点 mailport.lab.j3.ink"]
     G["docs/docs/en 与 docs/docs/zh-cn"] --> D
     H["docs/rspress.config.ts"] --> D
     I["README 文档链接"] --> F
@@ -56,12 +56,12 @@ flowchart LR
 | `root` | `path.join(__dirname, 'docs')` | 文档源根目录 |
 | `lang` | `zh-cn` | 默认语言（默认语言占据站点根路径） |
 | `locales` | `zh-cn` / `en` | 双语站点，简体中文标签为「简体中文」 |
-| `base` | `/mailport/` | GitHub Pages 仓库子路径 |
+| `base` | `/` | 自定义域名 `mailport.lab.j3.ink` 部署在根路径 |
 | `title` / `description` | MailPort | 站点标题与描述 |
 | `themeConfig.socialLinks` | GitHub 仓库地址 | 页头仓库入口 |
 | `i18nSource` | `zh-cn` / `en` | 主题文案本地化（大纲、搜索、导航等） |
 
-`base` 必须与仓库名 `mailport` 一致，否则 Pages 上的静态资源与路由会 404。
+站点通过自定义域名 `https://mailport.lab.j3.ink` 在根路径对外提供，`base` 取 `/`；若改回 GitHub Pages 默认地址 `wool-hmq.github.io/mailport/`，需把 `base` 同步改回 `/mailport/`，否则静态资源与路由会 404。
 
 ### 文档源目录
 
@@ -100,7 +100,7 @@ Rspress v2 的导航约定：
 
 ### README.md
 
-README 的文档入口改为在线站点地址（`https://wool-hmq.github.io/mailport/`），文档表格中的相对链接改为迁移后的 `docs/docs/...` 路径，保证仓库内阅读与在线阅读一致。
+README 的文档入口改为在线站点地址（`https://mailport.lab.j3.ink/`），文档表格中的相对链接改为迁移后的 `docs/docs/...` 路径，保证仓库内阅读与在线阅读一致。
 
 ## Data Models
 
@@ -136,7 +136,7 @@ Rspress 以 locale 的 `lang` 值匹配同名目录，默认语言目录的内�
 
 ## Correctness Properties
 
-1. 构建产物中所有静态资源引用以 `/mailport/` 为前缀，与 Pages 部署路径一致。
+1. 构建产物中静态资源引用以 `/` 为根，与自定义域名的根路径部署一致。
 2. `docs/docs/en/` 与 `docs/docs/zh-cn/` 中同名文档保持语义对应，页面结构一致。
 3. `docs/doc_build/` 中同时存在根路径 `index.html` 与 `en/` 目录，根路径页面为简体中文、`en/` 页面为 English。
 4. 工作流上传的产物目录与 Rspress 输出目录一致，部署后不会出现资源缺失。
@@ -150,12 +150,12 @@ Rspress 以 locale 的 `lang` 值匹配同名目录，默认语言目录的内�
 | 依赖安装失败 | Actions 构建步骤失败，工作流整体失败并保留日志 |
 | Markdown 内部链接失效 | Rspress 构建阶段报错，阻止发布 |
 | 仓库未启用 Pages | `actions/configure-pages` 失败，需在仓库 Settings → Pages 将 Source 设为 GitHub Actions |
-| `base` 与仓库名不一致 | 站点可构建但资源 404，通过校验产物路径前缀避免 |
+| `base` 与部署路径不一致 | 站点可构建但资源 404，自定义域名用 `/`，仓库子路径用 `/mailport/` |
 
 ## Test Strategy
 
 1. 本地执行 `npm run build`，确认构建成功且产物包含 `index.html` 与 `en/`。
-2. 检查产物首页与语言入口链接可访问，资源路径带 `/mailport/` 前缀。
+2. 检查产物首页与语言入口链接可访问，资源路径以 `/` 为根。
 3. 检查两种语言页面的顶部导航与侧边栏均包含六篇文档入口。
 4. 执行 `npm run dev` 启动本地开发服务器，通过平台预览地址验证页面渲染与语言切换。
 5. 推送后检查 GitHub Actions 运行记录，确认构建与部署两个 job 均成功。

@@ -4,7 +4,7 @@
 
 Turn email sending into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
 
-Docs: [English](https://wool-hmq.github.io/mailport/en/) / [简体中文](https://wool-hmq.github.io/mailport/)
+Docs: [English](https://mailport.lab.j3.ink/en/) / [简体中文](https://mailport.lab.j3.ink/)
 
 ## What it does
 
