@@ -2,13 +2,22 @@
 
 MailPort is a standard Next.js app. Deploying to Vercel takes three steps.
 
-## 1. Vercel (recommended)
+## 1. Vercel deployment (recommended)
 
-### Import the repository
+### 1. Import the repository
 
 On [vercel.com](https://vercel.com), choose **Add New → Project** and import your MailPort repository. It is auto-detected as Next.js; no build settings need changing.
 
-### Create a database
+**Or**
+
+Click the button below to jump straight to Vercel and deploy
+
+[![Vercel Deploy](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwool-hmq%2Fmailport%2Ftree%2Fmain%2Fexample)
+
+> [!TIP]
+> If you are not signed in, Vercel asks you to register or log in. Signing in with a GitHub account is the quickest path.
+
+### 2. Create a database
 
 Pick any service offering free PostgreSQL:
 
@@ -18,9 +27,11 @@ Pick any service offering free PostgreSQL:
 
 Collect the connection details (host, port, database name, user, password).
 
-### Add environment variables
+For another database type, see [Database Setup](./db-guide).
 
-Under **Settings → Environment Variables**:
+### 3. Configure environment variables
+
+Under **Settings → Environment Variables** in your Vercel project:
 
 | Variable | Value |
 | --- | --- |
@@ -35,7 +46,7 @@ Under **Settings → Environment Variables**:
 
 Redeploy for the variables to take effect.
 
-### Verify
+### 4. Verify
 
 - Open `https://<your-app>.vercel.app/api/health` — expect `status: "ok"`, `driver: "postgres"`.
 - Open `https://<your-app>.vercel.app/login` and sign in with `ADMIN_PASSWORD`.
@@ -65,7 +76,7 @@ npm run dev
 
 Open `http://localhost:3000/login`.
 
-## 3. VPS / self-hosted
+## 3. VPS / Docker deployment
 
 ```bash
 # Build and run
@@ -78,18 +89,18 @@ pm2 start "npm run start" --name mailport
 
 SQLite works on a VPS (the filesystem is writable) — point `SQLITE_PATH` at a persistent directory. Put Nginx in front of port 3000.
 
-## Choosing a database
+## 4. Choosing a database
 
 | Scenario | Recommended |
 | --- | --- |
-| Vercel | PostgreSQL (Neon / Supabase) |
+| Vercel deployment | PostgreSQL (Neon / Supabase) |
 | Access from China | MongoDB Atlas or self-hosted MySQL |
 | Local development | SQLite, zero config |
-| VPS | Anything; SQLite is simplest |
+| VPS deployment | Anything; SQLite is simplest |
 
 **Do not use SQLite on Vercel** — serverless functions have a read-only filesystem and writes are lost.
 
-## Reverse proxy notes
+## 5. Reverse proxy notes
 
 When behind Nginx, raise the request body size for larger HTML emails:
 
@@ -102,7 +113,7 @@ location / {
 }
 ```
 
-## Upgrading
+## 6. Upgrading
 
 ```bash
 git pull
@@ -111,9 +122,9 @@ npm run build
 # restart the process
 ```
 
-Schema changes are handled by `init()` on startup (`CREATE TABLE IF NOT EXISTS`). Breaking changes ship with a dedicated migration script in the release notes.
+Schema changes are handled by the app on startup (`CREATE TABLE IF NOT EXISTS` in `init()`). Breaking changes ship with a dedicated migration script in the release notes.
 
-## Troubleshooting
+## 7. Troubleshooting
 
 **"ADMIN_PASSWORD is not configured" on the login page**
 The variable is not set. Check the Vercel project settings and redeploy.
