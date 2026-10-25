@@ -70,7 +70,7 @@
 1. 点击 **新建发件商**。
 2. 填写信息，并点击 **新建**。
 
-> [!Note]  
+> [!Note]
 > Oauth 发件配置教程：[《Outlook / Gmail OAuth 发件》](./oauth)  
 > HTTP API 发件配置教程：[《HTTP API 发件商》](./http-sender)
 
