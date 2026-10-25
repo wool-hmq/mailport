@@ -1,0 +1,32 @@
+[
+  {
+    "type": "file",
+    "name": "api.md",
+    "label": "API 参考"
+  },
+  {
+    "type": "file",
+    "name": "env.md",
+    "label": "环境变量"
+  },
+  {
+    "type": "file",
+    "name": "database.md",
+    "label": "数据库结构"
+  },
+  {
+    "type": "file",
+    "name": "http-sender.md",
+    "label": "HTTP 发件商"
+  },
+  {
+    "type": "file",
+    "name": "oauth.md",
+    "label": "OAuth 发件商"
+  },
+  {
+    "type": "file",
+    "name": "deploy.md",
+    "label": "部署指南"
+  }
+]

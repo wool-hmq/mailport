@@ -1,0 +1,32 @@
+[
+  {
+    "type": "file",
+    "name": "api.md",
+    "label": "API Reference"
+  },
+  {
+    "type": "file",
+    "name": "env.md",
+    "label": "Environment Variables"
+  },
+  {
+    "type": "file",
+    "name": "database.md",
+    "label": "Database Schema"
+  },
+  {
+    "type": "file",
+    "name": "http-sender.md",
+    "label": "HTTP API Senders"
+  },
+  {
+    "type": "file",
+    "name": "oauth.md",
+    "label": "OAuth Senders"
+  },
+  {
+    "type": "file",
+    "name": "deploy.md",
+    "label": "Deployment"
+  }
+]

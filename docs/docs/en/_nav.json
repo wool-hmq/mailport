@@ -1,0 +1,31 @@
+[
+  {
+    "text": "Docs",
+    "items": [
+      {
+        "text": "API Reference",
+        "link": "/api"
+      },
+      {
+        "text": "Environment Variables",
+        "link": "/env"
+      },
+      {
+        "text": "Database Schema",
+        "link": "/database"
+      },
+      {
+        "text": "HTTP API Senders",
+        "link": "/http-sender"
+      },
+      {
+        "text": "OAuth Senders",
+        "link": "/oauth"
+      },
+      {
+        "text": "Deployment",
+        "link": "/deploy"
+      }
+    ]
+  }
+]

@@ -2,7 +2,7 @@
 
 Turn email sending into an HTTP API. Each sender gets its own endpoint and API keys — managed from a web dashboard, stored in a database of your choice.
 
-Docs: [English](./doc/en) / [简体中文](./doc/zh-cn)
+Docs: [English](https://wool-hmq.github.io/mailport/en/) / [简体中文](https://wool-hmq.github.io/mailport/)
 
 ## What it does
 
@@ -45,12 +45,12 @@ curl -X POST https://your-app.vercel.app/api/a1b2c3/send \
 
 | Topic | English | 简体中文 |
 | --- | --- | --- |
-| Environment variables | [en/env.md](./doc/en/env.md) | [zh-cn/env.md](./doc/zh-cn/env.md) |
-| Database schema | [en/database.md](./doc/en/database.md) | [zh-cn/database.md](./doc/zh-cn/database.md) |
-| API reference | [en/api.md](./doc/en/api.md) | [zh-cn/api.md](./doc/zh-cn/api.md) |
-| HTTP API senders | [en/http-sender.md](./doc/en/http-sender.md) | [zh-cn/http-sender.md](./doc/zh-cn/http-sender.md) |
-| Outlook / Gmail OAuth | [en/oauth.md](./doc/en/oauth.md) | [zh-cn/oauth.md](./doc/zh-cn/oauth.md) |
-| Deployment | [en/deploy.md](./doc/en/deploy.md) | [zh-cn/deploy.md](./doc/zh-cn/deploy.md) |
+| Environment variables | [en/env.md](./docs/docs/en/env.md) | [zh-cn/env.md](./docs/docs/zh-cn/env.md) |
+| Database schema | [en/database.md](./docs/docs/en/database.md) | [zh-cn/database.md](./docs/docs/zh-cn/database.md) |
+| API reference | [en/api.md](./docs/docs/en/api.md) | [zh-cn/api.md](./docs/docs/zh-cn/api.md) |
+| HTTP API senders | [en/http-sender.md](./docs/docs/en/http-sender.md) | [zh-cn/http-sender.md](./docs/docs/zh-cn/http-sender.md) |
+| Outlook / Gmail OAuth | [en/oauth.md](./docs/docs/en/oauth.md) | [zh-cn/oauth.md](./docs/docs/zh-cn/oauth.md) |
+| Deployment | [en/deploy.md](./docs/docs/en/deploy.md) | [zh-cn/deploy.md](./docs/docs/zh-cn/deploy.md) |
 
 ## Tech stack
 
