@@ -2,5 +2,7 @@
   "introduction",
   "deploy",
   "db-guide",
-  "use"
+  "use",
+  "oauth",
+  "http-sender"
 ]
