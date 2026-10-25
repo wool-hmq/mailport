@@ -1,30 +1,52 @@
 [
   {
-    "text": "文档",
+    "text": "使用指南",
     "items": [
       {
-        "text": "API 参考",
-        "link": "/api"
-      },
-      {
-        "text": "环境变量",
-        "link": "/env"
-      },
-      {
-        "text": "数据库结构",
-        "link": "/database"
-      },
-      {
-        "text": "HTTP 发件商",
-        "link": "/http-sender"
-      },
-      {
-        "text": "OAuth 发件商",
-        "link": "/oauth"
+        "text": "简介",
+        "link": "/guide/introduction.html"
       },
       {
         "text": "部署指南",
-        "link": "/deploy"
+        "link": "/guide/deploy.html"
+      },
+      {
+        "text": "数据库配置指南",
+        "link": "/guide/db-guide.html"
+      },
+      {
+        "text": "控制台使用教程",
+        "link": "/guide/use.html"
+      }
+    ]
+  },
+  {
+    "text": "发件商配置",
+    "items": [
+      {
+        "text": "Oauth 发件商",
+        "link": "/guide/oauth.html"
+      },
+      {
+        "text": "HTTP 发件商",
+        "link": "/guide/http-sender.html"
+      }
+    ]
+  },
+  {
+    "text": "参考手册",
+    "items": [
+      {
+        "text": "API 参考",
+        "link": "/reference/api.html"
+      },
+      {
+        "text": "环境变量",
+        "link": "/reference/env.html"
+      },
+      {
+        "text": "数据库结构",
+        "link": "/reference/database.html"
       }
     ]
   }

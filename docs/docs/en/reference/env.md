@@ -133,8 +133,9 @@ Changing it makes previously encrypted SMTP passwords and API keys undecryptable
   "status": "ok",
   "driver": "postgres",
   "adminConfigured": true,
-  "secretConfigured": true
+  "secretConfigured": true,
+  "timestamp": 1730000000000
 }
 ```
 
-`driver: null` or `status: "degraded"` means no database was detected.
+`driver: null` or `status: "degraded"` means no database was detected. For where to fetch each provider's connection details and how to split them into the variables above, see [Database Setup](../guide/db-guide.html).

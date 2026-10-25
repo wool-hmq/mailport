@@ -9,6 +9,7 @@
     "name": "env.md",
     "label": "环境变量"
   },
+  {
     "type": "file",
     "name": "database.md",
     "label": "数据库结构"

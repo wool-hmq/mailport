@@ -1,30 +1,52 @@
 [
   {
-    "text": "Docs",
+    "text": "Guides",
     "items": [
       {
-        "text": "API Reference",
-        "link": "/api"
-      },
-      {
-        "text": "Environment Variables",
-        "link": "/env"
-      },
-      {
-        "text": "Database Schema",
-        "link": "/database"
-      },
-      {
-        "text": "HTTP API Senders",
-        "link": "/http-sender"
-      },
-      {
-        "text": "OAuth Senders",
-        "link": "/oauth"
+        "text": "Introduction",
+        "link": "/en/guide/introduction.html"
       },
       {
         "text": "Deployment",
-        "link": "/deploy"
+        "link": "/en/guide/deploy.html"
+      },
+      {
+        "text": "Database Setup",
+        "link": "/en/guide/db-guide.html"
+      },
+      {
+        "text": "Dashboard Walkthrough",
+        "link": "/en/guide/use.html"
+      }
+    ]
+  },
+  {
+    "text": "Senders",
+    "items": [
+      {
+        "text": "OAuth Senders",
+        "link": "/en/guide/oauth.html"
+      },
+      {
+        "text": "HTTP API Senders",
+        "link": "/en/guide/http-sender.html"
+      }
+    ]
+  },
+  {
+    "text": "Reference",
+    "items": [
+      {
+        "text": "API Reference",
+        "link": "/en/reference/api.html"
+      },
+      {
+        "text": "Environment Variables",
+        "link": "/en/reference/env.html"
+      },
+      {
+        "text": "Database Schema",
+        "link": "/en/reference/database.html"
       }
     ]
   }

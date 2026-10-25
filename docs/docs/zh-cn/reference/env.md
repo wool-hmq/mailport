@@ -133,8 +133,9 @@ SQLITE_PATH / SQLITE_DB    →  SQLite
   "status": "ok",
   "driver": "postgres",
   "adminConfigured": true,
-  "secretConfigured": true
+  "secretConfigured": true,
+  "timestamp": 1730000000000
 }
 ```
 
-`driver` 为 `null` 或 `status` 为 `degraded` 时,说明数据库未配置成功。
+`driver` 为 `null` 或 `status` 为 `degraded` 时,说明数据库未配置成功。各平台连接信息如何获取、如何拆成上面这些变量,见[数据库配置指南](../guide/db-guide.html)。

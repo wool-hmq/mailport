@@ -10,10 +10,10 @@ hero:
   actions:
     - theme: brand
       text: API 参考
-      link: /api.html
+      link: /reference/api.html
     - theme: alt
       text: 部署指南
-      link: /deploy.html
+      link: /guide/deploy.html
     - theme: alt
       text: GitHub
       link: https://github.com/wool-hmq/mailport

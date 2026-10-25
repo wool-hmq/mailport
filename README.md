@@ -47,12 +47,15 @@ curl -X POST https://your-app.vercel.app/api/a1b2c3/send \
 
 | Topic | English | 简体中文 |
 | --- | --- | --- |
-| Environment variables | [en/env.md](./docs/docs/en/env.md) | [zh-cn/env.md](./docs/docs/zh-cn/env.md) |
-| Database schema | [en/database.md](./docs/docs/en/database.md) | [zh-cn/database.md](./docs/docs/zh-cn/database.md) |
-| API reference | [en/api.md](./docs/docs/en/api.md) | [zh-cn/api.md](./docs/docs/zh-cn/api.md) |
-| HTTP API senders | [en/http-sender.md](./docs/docs/en/http-sender.md) | [zh-cn/http-sender.md](./docs/docs/zh-cn/http-sender.md) |
-| Outlook / Gmail OAuth | [en/oauth.md](./docs/docs/en/oauth.md) | [zh-cn/oauth.md](./docs/docs/zh-cn/oauth.md) |
-| Deployment | [en/deploy.md](./docs/docs/en/deploy.md) | [zh-cn/deploy.md](./docs/docs/zh-cn/deploy.md) |
+| Introduction | [en/guide/introduction.md](./docs/docs/en/guide/introduction.md) | [zh-cn/guide/introduction.md](./docs/docs/zh-cn/guide/introduction.md) |
+| Deployment | [en/guide/deploy.md](./docs/docs/en/guide/deploy.md) | [zh-cn/guide/deploy.md](./docs/docs/zh-cn/guide/deploy.md) |
+| Database setup | [en/guide/db-guide.md](./docs/docs/en/guide/db-guide.md) | [zh-cn/guide/db-guide.md](./docs/docs/zh-cn/guide/db-guide.md) |
+| Dashboard walkthrough | [en/guide/use.md](./docs/docs/en/guide/use.md) | [zh-cn/guide/use.md](./docs/docs/zh-cn/guide/use.md) |
+| Environment variables | [en/reference/env.md](./docs/docs/en/reference/env.md) | [zh-cn/reference/env.md](./docs/docs/zh-cn/reference/env.md) |
+| Database schema | [en/reference/database.md](./docs/docs/en/reference/database.md) | [zh-cn/reference/database.md](./docs/docs/zh-cn/reference/database.md) |
+| API reference | [en/reference/api.md](./docs/docs/en/reference/api.md) | [zh-cn/reference/api.md](./docs/docs/zh-cn/reference/api.md) |
+| HTTP API senders | [en/guide/http-sender.md](./docs/docs/en/guide/http-sender.md) | [zh-cn/guide/http-sender.md](./docs/docs/zh-cn/guide/http-sender.md) |
+| Outlook / Gmail OAuth | [en/guide/oauth.md](./docs/docs/en/guide/oauth.md) | [zh-cn/guide/oauth.md](./docs/docs/zh-cn/guide/oauth.md) |
 
 ## Tech stack
 

@@ -2,7 +2,7 @@
   {
     "type": "file",
     "name": "introduction.md",
-    "label": "Mailport 介绍"
+    "label": "简介"
   },
   {
     "type": "file",
@@ -12,7 +12,12 @@
   {
     "type": "file",
     "name": "db-guide.md",
-    "label": "数据库指南"
+    "label": "数据库配置指南"
+  },
+  {
+    "type": "file",
+    "name": "use.md",
+    "label": "控制台使用教程"
   },
   {
     "type": "file",

@@ -1,0 +1,32 @@
+[
+  {
+    "type": "file",
+    "name": "introduction.md",
+    "label": "Introduction"
+  },
+  {
+    "type": "file",
+    "name": "deploy.md",
+    "label": "Deployment"
+  },
+  {
+    "type": "file",
+    "name": "db-guide.md",
+    "label": "Database Setup"
+  },
+  {
+    "type": "file",
+    "name": "use.md",
+    "label": "Dashboard Walkthrough"
+  },
+  {
+    "type": "file",
+    "name": "oauth.md",
+    "label": "OAuth Senders"
+  },
+  {
+    "type": "file",
+    "name": "http-sender.md",
+    "label": "HTTP API Senders"
+  }
+]

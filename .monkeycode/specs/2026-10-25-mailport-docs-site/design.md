@@ -72,13 +72,21 @@ docs/
 │   ├── public/             # 静态资源（图标）
 │   ├── en/
 │   │   ├── _nav.json       # 顶部导航栏
-│   │   ├── _meta.json      # 全局侧边栏
 │   │   ├── index.md        # English 首页
-│   │   └── api.md / database.md / deploy.md / env.md / http-sender.md / oauth.md
+│   │   ├── guide/          # 使用指南
+│   │   │   ├── _meta.json
+│   │   │   └── introduction.md / deploy.md / db-guide.md / use.md / oauth.md / http-sender.md
+│   │   └── reference/      # 参考手册
+│   │       ├── _meta.json
+│   │       └── api.md / env.md / database.md
 │   └── zh-cn/
 │       ├── _nav.json
-│       ├── _meta.json
-│       └── （与 en 同名的六篇文档）
+│       ├── guide/          # 使用指南（与 en 同结构）
+│       │   ├── _meta.json
+│       │   └── introduction.md / deploy.md / db-guide.md / use.md / oauth.md / http-sender.md
+│       └── reference/      # 参考手册（与 en 同结构）
+│           ├── _meta.json
+│           └── api.md / env.md / database.md
 ├── package.json
 ├── package-lock.json
 └── rspress.config.ts
@@ -86,9 +94,9 @@ docs/
 
 Rspress v2 的导航约定：
 
-- `_nav.json` 位于语言目录根部，声明顶部导航栏，条目使用 `text` 与 `link`。
-- `_meta.json` 位于语言目录根部时声明全局侧边栏，条目使用 v2 对象格式 `{"type": "file", "name": "api.md", "label": "API 参考"}`。
-- 语言目录根部使用带 `text` 键的旧版 `_meta.json` 会触发 Rspress v2 的迁移校验错误并终止构建。
+- `_nav.json` 位于语言目录根部，声明顶部导航栏，条目使用 `text` 与 `link`，可按 `items` 分组。
+- `_meta.json` 位于子目录（`guide/`、`reference/`）时声明该目录的侧边栏顺序，条目使用 v2 对象格式 `{"type": "file", "name": "api.md", "label": "API 参考"}`。
+- 语言目录根部使用带 `text` 键的旧版 `_meta.json` 会触发 Rspress v2 的迁移校验错误并终止构建；当前结构下语言目录根部不再放置 `_meta.json`，由各子目录的 `_meta.json` 分别声明。
 
 ### .github/workflows/docs.yml
 
@@ -106,18 +114,22 @@ README 的文档入口改为在线站点地址（`https://mailport.lab.j3.ink/`�
 
 ### 导航配置
 
-顶部导航 `_nav.json`：
+顶部导航 `_nav.json`（按分组声明）：
 
 ```json
 [
   {
-    "text": "文档",
-    "items": [{ "text": "API 参考", "link": "/api" }]
+    "text": "使用指南",
+    "items": [{ "text": "数据库配置指南", "link": "/guide/db-guide.html" }]
+  },
+  {
+    "text": "参考手册",
+    "items": [{ "text": "API 参考", "link": "/reference/api.html" }]
   }
 ]
 ```
 
-全局侧边栏 `_meta.json`：
+子目录侧边栏 `_meta.json`：
 
 ```json
 [
@@ -141,7 +153,7 @@ Rspress 以 locale 的 `lang` 值匹配同名目录，默认语言目录的内�
 3. `docs/doc_build/` 中同时存在根路径 `index.html` 与 `en/` 目录，根路径页面为简体中文、`en/` 页面为 English。
 4. 工作流上传的产物目录与 Rspress 输出目录一致，部署后不会出现资源缺失。
 5. 仓库内 `package.json`（应用）与 `docs/package.json`（文档）互不影响，应用构建流程不包含文档依赖。
-6. 两种语言的顶部导航与侧边栏均包含六篇文档入口，语言切换后入口文案同步切换。
+6. 两种语言的顶部导航与侧边栏均包含使用指南（6 篇）与参考手册（3 篇）入口，语言切换后入口文案同步切换。
 
 ## Error Handling
 
