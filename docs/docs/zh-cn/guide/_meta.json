@@ -1,8 +1,27 @@
 [
-  "introduction",
-  "deploy",
-  "db-guide",
-  "use",
-  "oauth",
-  "http-sender"
+  {
+    "type": "file",
+    "name": "introduction.md",
+    "label": "Mailport 介绍"
+  },
+  {
+    "type": "file",
+    "name": "deploy.md",
+    "label": "部署指南"
+  },
+  {
+    "type": "file",
+    "name": "db-guide.md",
+    "label": "数据库指南"
+  },
+  {
+    "type": "file",
+    "name": "oauth.md",
+    "label": "Oauth 发件商"
+  },
+  {
+    "type": "file",
+    "name": "http-sender.md",
+    "label": "HTTP 发件商"
+  }
 ]
