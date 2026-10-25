@@ -8,7 +8,7 @@ export default defineConfig({
   description:
     '把邮件发送变成 HTTP API。每个发件商拥有独立接口与 API 密钥，在网页控制台中统一管理。',
   icon: '/mailport-icon.svg',
-  base: '/mailport/',
+  base: '/',
   globalStyles: path.join(__dirname, 'styles/home.css'),
   locales: [
     {
