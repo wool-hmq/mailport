@@ -1,0 +1,32 @@
+[
+  {
+    "type": "file",
+    "name": "introduction.md",
+    "label": "はじめに"
+  },
+  {
+    "type": "file",
+    "name": "deploy.md",
+    "label": "デプロイガイド"
+  },
+  {
+    "type": "file",
+    "name": "db-guide.md",
+    "label": "データベース設定ガイド"
+  },
+  {
+    "type": "file",
+    "name": "use.md",
+    "label": "ダッシュボードの使い方"
+  },
+  {
+    "type": "file",
+    "name": "oauth.md",
+    "label": "OAuth 送信者"
+  },
+  {
+    "type": "file",
+    "name": "http-sender.md",
+    "label": "HTTP API 送信者"
+  }
+]

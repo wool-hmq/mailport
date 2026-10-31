@@ -58,7 +58,7 @@ Configure any one group of database variables — see [Database Setup](./db-guid
 | `password authentication failed` / `bad auth : Authentication failed` | Wrong username or password | Verify the credentials in the provider console, then update the environment variables |
 | `Server selection timed out after 8000 ms` | Network unreachable or IP not allowed | Check the Atlas Network Access list; for self-hosted, check the firewall and allowlist |
 
-The full troubleshooting table lives in [Database Setup](./db-guide#general-troubleshooting).
+The full troubleshooting table lives in [Database Setup](./db-guide#6-general-troubleshooting).
 
 ## 2. Sign in
 

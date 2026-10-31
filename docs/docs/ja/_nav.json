@@ -1,0 +1,53 @@
+[
+  {
+    "text": "利用ガイド",
+    "items": [
+      {
+        "text": "はじめに",
+        "link": "/guide/introduction.html"
+      },
+      {
+        "text": "デプロイガイド",
+        "link": "/guide/deploy.html"
+      },
+      {
+        "text": "データベース設定ガイド",
+        "link": "/guide/db-guide.html"
+      },
+      {
+        "text": "ダッシュボード使い方",
+        "link": "/guide/use.html"
+      }
+    ]
+  },
+  {
+    "text": "送信者設定",
+    "items": [
+      {
+        "text": "OAuth 送信者",
+        "link": "/guide/oauth.html"
+      },
+      {
+        "text": "HTTP API 送信者",
+        "link": "/guide/http-sender.html"
+      }
+    ]
+  },
+  {
+    "text": "リファレンス",
+    "items": [
+      {
+        "text": "API リファレンス",
+        "link": "/reference/api.html"
+      },
+      {
+        "text": "環境変数",
+        "link": "/reference/env.html"
+      },
+      {
+        "text": "データベース構造",
+        "link": "/reference/database.html"
+      }
+    ]
+  }
+]

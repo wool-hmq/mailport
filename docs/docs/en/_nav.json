@@ -4,19 +4,19 @@
     "items": [
       {
         "text": "Introduction",
-        "link": "/en/guide/introduction.html"
+        "link": "/guide/introduction.html"
       },
       {
         "text": "Deployment",
-        "link": "/en/guide/deploy.html"
+        "link": "/guide/deploy.html"
       },
       {
         "text": "Database Setup",
-        "link": "/en/guide/db-guide.html"
+        "link": "/guide/db-guide.html"
       },
       {
         "text": "Dashboard Walkthrough",
-        "link": "/en/guide/use.html"
+        "link": "/guide/use.html"
       }
     ]
   },
@@ -25,11 +25,11 @@
     "items": [
       {
         "text": "OAuth Senders",
-        "link": "/en/guide/oauth.html"
+        "link": "/guide/oauth.html"
       },
       {
         "text": "HTTP API Senders",
-        "link": "/en/guide/http-sender.html"
+        "link": "/guide/http-sender.html"
       }
     ]
   },
@@ -38,15 +38,15 @@
     "items": [
       {
         "text": "API Reference",
-        "link": "/en/reference/api.html"
+        "link": "/reference/api.html"
       },
       {
         "text": "Environment Variables",
-        "link": "/en/reference/env.html"
+        "link": "/reference/env.html"
       },
       {
         "text": "Database Schema",
-        "link": "/en/reference/database.html"
+        "link": "/reference/database.html"
       }
     ]
   }

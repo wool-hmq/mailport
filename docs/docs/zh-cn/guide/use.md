@@ -57,7 +57,7 @@
 | `password authentication failed` / `bad auth : Authentication failed` | 用户名或密码错误 | 核对控制台里的用户名与密码,重置后同步更新环境变量 |
 | `Server selection timed out after 8000 ms` | 网络不通或 IP 白名单未放行 | Atlas 检查 Network Access;自建检查防火墙与白名单配置 |
 
-完整排错表见[数据库配置指南](./db-guide#通用排错)。
+完整排错表见[数据库配置指南](./db-guide#六通用排错)。
 
 ## 二、登录控制面板
 使用设置好的 `ADMIN_PASSWORD` 环境变量作为密码登录。详见[环境变量-必填变量](../reference/env.html#必填变量)。

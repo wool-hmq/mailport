@@ -1,0 +1,17 @@
+[
+  {
+    "type": "file",
+    "name": "api.md",
+    "label": "API 參考"
+  },
+  {
+    "type": "file",
+    "name": "env.md",
+    "label": "環境變數"
+  },
+  {
+    "type": "file",
+    "name": "database.md",
+    "label": "資料庫結構"
+  }
+]

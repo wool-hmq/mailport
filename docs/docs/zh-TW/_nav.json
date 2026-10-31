@@ -1,0 +1,53 @@
+[
+  {
+    "text": "使用指南",
+    "items": [
+      {
+        "text": "簡介",
+        "link": "/guide/introduction.html"
+      },
+      {
+        "text": "部署指南",
+        "link": "/guide/deploy.html"
+      },
+      {
+        "text": "資料庫設定指南",
+        "link": "/guide/db-guide.html"
+      },
+      {
+        "text": "控制台使用教學",
+        "link": "/guide/use.html"
+      }
+    ]
+  },
+  {
+    "text": "寄件商設定",
+    "items": [
+      {
+        "text": "OAuth 寄件商",
+        "link": "/guide/oauth.html"
+      },
+      {
+        "text": "HTTP 寄件商",
+        "link": "/guide/http-sender.html"
+      }
+    ]
+  },
+  {
+    "text": "參考手冊",
+    "items": [
+      {
+        "text": "API 參考",
+        "link": "/reference/api.html"
+      },
+      {
+        "text": "環境變數",
+        "link": "/reference/env.html"
+      },
+      {
+        "text": "資料庫結構",
+        "link": "/reference/database.html"
+      }
+    ]
+  }
+]
